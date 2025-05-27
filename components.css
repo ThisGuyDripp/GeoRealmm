@@ -1,0 +1,834 @@
+/* Header Content Components */
+#mainHeader .logo-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--accent-primary);
+    text-shadow: 0 0 5px color-mix(in srgb, var(--accent-primary) 30%, transparent);
+}
+
+#mainNav a.nav-link {
+    color: var(--text-secondary);
+    margin-left: 20px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+    padding: 0.5rem 0;
+    position: relative;
+}
+
+/* Style for non-active links on hover */
+#mainNav a.nav-link:not(.active-nav-link):hover {
+    color: var(--accent-tertiary);
+}
+
+/* Style for the active link (always gold) */
+#mainNav a.nav-link.active-nav-link {
+    color: var(--accent-primary);
+}
+
+/* Underline effect for hover (non-active) and active links */
+#mainNav a.nav-link::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    /* Default to transparent or a common base, transition width */
+    background-color: transparent; 
+    transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+/* Underline for non-active link on hover - use tertiary color */
+#mainNav a.nav-link:not(.active-nav-link):hover::after {
+    width: 70%;
+    background-color: var(--accent-tertiary);
+}
+
+/* Underline for active link - use primary accent color */
+#mainNav a.nav-link.active-nav-link::after {
+    width: 70%;
+    background-color: var(--accent-primary);
+}
+
+/* Home Section Components */
+#mainGeoRealmTitle {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(2.5rem, 8vw, 4.5rem); /* Responsive font size */
+    font-weight: 900; /* Orbitron boldest weight */
+    color: var(--text-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 1rem; /* Spacing below the title */
+    text-shadow:
+        0 0 10px rgba(255, 255, 255, 0.6),
+        0 0 20px rgba(255, 255, 255, 0.4),
+        0 0 35px rgba(var(--accent-primary-rgb), 0.6),
+        0 0 50px rgba(var(--accent-secondary-rgb), 0.4);
+}
+
+#homeTextPanel {
+    background-color: rgba(10, 10, 20, 0.8);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-radius: 12px;
+    padding: clamp(1.8rem, 4vw, 2.5rem);
+    border: 1px solid rgba(var(--accent-primary-rgb), 0.4); /* Assuming --accent-primary is defined as RGB for rgba */
+    box-shadow: 0 12px 50px rgba(0,0,0,0.5);
+    max-width: 500px;
+    z-index: 10;
+    margin-bottom: 1.5rem;
+}
+#homeTextPanel p {
+    line-height: 1.75;
+    margin-bottom: 2rem;
+}
+
+
+/* Earth Visualization Components */
+#earthContainerWrapper {
+    height: 80vh; /* Default height */
+    max-height: 600px; /* Max height */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative; /* For z-indexing if needed */
+    z-index: 1; /* Ensure it's part of the stacking context, but below modals/header */
+}
+
+#earthContainer {
+    width: 100%;
+    height: 100%;
+    position: relative; /* For child absolute positioning like loading indicator */
+    background-color: transparent; /* Ensure no override of global background */
+}
+
+#earthCanvas { /* Canvas specifically for Earth, if different from spaceBackgroundCanvas */
+    display: block;
+    width: 100% !important; /* Important to override potential defaults */
+    height: 100% !important;
+    /* No position fixed here, as it's contained within earthContainerWrapper */
+}
+/* Loading Indicator for 3D Earth */
+.loading-indicator {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: var(--text-primary);
+    z-index: 5; /* Above canvas, below content if needed */
+}
+.spinner {
+    border: 4px solid rgba(var(--text-secondary-rgb), 0.3); /* Assuming --text-secondary is defined as RGB for rgba */
+    border-left-color: var(--accent-primary);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 10px;
+}
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+
+/* Map Component (NORSU Section) */
+.map-placeholder {
+    width: 100%;
+    max-width: 600px;
+    height: 400px;
+    background-color: var(--bg-secondary);
+    border: 2px solid var(--bg-accent);
+    border-radius: 12px;
+    overflow: hidden; /* Ensures iframe respects border-radius */
+    position: relative; /* For ::before pseudo-element */
+}
+.map-placeholder iframe {
+    border-radius: 10px; /* Slightly smaller to fit inside border */
+}
+.map-placeholder::before { /* Loading message for map */
+    content: "Loading map...";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: var(--text-secondary);
+    font-style: italic;
+}
+.map-placeholder iframe:not([src="about:blank"]) + ::before { /* Check if src is not "about:blank" */
+    display: none; /* Hide loading message once iframe has a real src */
+}
+
+
+/* --- Tool Carousel Components (New Flat Design) --- */
+.carousel-container {
+    position: relative;
+    width: 100%;
+    max-width: 1200px; /* Adjust as needed */
+    margin: 2rem auto; /* Centering and spacing */
+}
+
+.carousel-viewport {
+    width: 100%;
+    overflow: hidden;
+    cursor: grab; /* Indicate draggable */
+    position: relative; /* For absolute positioning of nav buttons if needed */
+    padding: 0 40px; /* Space for nav buttons if they are outside the card flow but inside viewport */
+}
+
+/* Page Blur Effect when description panel is active */
+body.blur-active-page > #mainHeader,
+body.blur-active-page > #pageContent, /* Target all sections within pageContent */
+body.blur-active-page > #siteFooter { /* Assuming footer should also blur */
+    filter: blur(5px);
+    transition: filter 0.3s ease-out;
+    pointer-events: none; /* Prevent interaction with blurred background elements */
+}
+
+/* Ensure the description panel and the currently focused card are NOT blurred and remain interactive */
+body.blur-active-page #toolDescriptionPanel,
+body.blur-active-page .tool-card.active-focus {
+    filter: none !important;
+    pointer-events: auto !important;
+}
+/* Also ensure the carousel navigation buttons remain interactive if they are outside the direct card flow */
+body.blur-active-page .carousel-nav-btn {
+    pointer-events: auto !important; 
+}
+
+
+.tool-card-container {
+    display: flex; /* Lays out cards in a row */
+    position: relative;
+    will-change: transform; /* Performance hint for browsers */
+    transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1); /* Smooth snapping animation */
+}
+
+.tool-card {
+    background-color: #372e29; /* Dark brown-gray, consider using CSS var */
+    border: 2px solid var(--accent-primary); /* Gold accent border */
+    border-radius: 12px; /* Rounded corners */
+    width: 280px; /* Fixed width for each card */
+    min-height: 380px; /* Minimum height */
+    flex-shrink: 0; /* Prevent cards from shrinking */
+    margin: 0 10px; /* Space between cards */
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    overflow: hidden; /* Clip content like images to rounded corners */
+    transition: transform 0.3s ease, opacity 0.3s ease, filter 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    position: relative; /* For z-index stacking if needed */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+/* Pulsing Load Animation for Tool Cards */
+@keyframes pulse-glow {
+    0% { box-shadow: 0 0 5px rgba(var(--accent-primary-rgb, 255, 215, 0), 0.2), 0 0 8px rgba(var(--accent-primary-rgb, 255, 215, 0), 0.1), 0 4px 15px rgba(0,0,0,0.3); }
+    50% { box-shadow: 0 0 12px rgba(var(--accent-primary-rgb, 255, 215, 0), 0.4), 0 0 20px rgba(var(--accent-primary-rgb, 255, 215, 0), 0.25), 0 6px 20px rgba(0,0,0,0.4); }
+    100% { box-shadow: 0 0 5px rgba(var(--accent-primary-rgb, 255, 215, 0), 0.2), 0 0 8px rgba(var(--accent-primary-rgb, 255, 215, 0), 0.1), 0 4px 15px rgba(0,0,0,0.3); }
+}
+
+.tool-card.pulsing-load {
+    animation: pulse-glow 2.5s infinite ease-in-out;
+}
+/* Stop pulsing when card is active/focused or when panel is open */
+.tool-card.active-focus.pulsing-load,
+body.blur-active-page .tool-card.pulsing-load {
+    animation: none;
+}
+
+
+.tool-card:not(.active-focus):hover { /* Subtle hover effect if not blurred and not the active-focus one */
+    transform: translateY(-6px) scale(1.025);
+    border-color: var(--accent-tertiary); /* Use Teal for hover border */
+    box-shadow: 0 8px 20px rgba(0,0,0,0.35); /* Enhanced shadow on hover */
+}
+
+.tool-card.active-focus { /* When card is selected for description panel */
+    transform: scale(1.05) !important; /* Ensure it scales up */
+    z-index: 102 !important; /* Above blurred background items, below panel itself */
+    border-color: var(--accent-secondary); /* Highlight border */
+    box-shadow: 0 0 30px rgba(var(--accent-secondary-rgb), 0.5); /* Assuming --accent-secondary is rgb for rgba */
+    animation: none; /* Stop pulsing when focused */
+}
+
+
+.tool-card-image {
+    width: 100%;
+    height: 200px; /* Fixed height for image */
+    object-fit: cover; /* Cover the area, cropping if necessary */
+    display: block; /* Remove extra space below image */
+}
+
+.tool-card-overlay {
+    padding: 1rem;
+    background-color: rgba(42, 35, 30, 0.9); /* Semi-transparent overlay */
+    color: var(--text-primary);
+    flex-grow: 1; /* Take remaining space in card */
+    display: flex;
+    flex-direction: column;
+}
+
+.tool-card .tool-icon {
+    font-size: 1.5rem; /* Emoji size */
+    color: var(--accent-primary);
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.tool-card h3 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.1rem; /* Card title size */
+    font-weight: 600;
+    color: #E0E0E0; /* Light text for heading */
+    margin-bottom: 0.5rem;
+    line-height: 1.3;
+}
+
+.tool-card .tool-card-short-desc { 
+    font-size: 0.85rem;
+    color: #CFD8DC; /* Lighter gray for description */
+    line-height: 1.5;
+    margin-bottom: 0; /* No margin at the bottom of the description */
+}
+
+/* Carousel Navigation Buttons */
+.carousel-nav-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(var(--accent-primary-rgb), 0.7);
+    color: var(--bg-primary);
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 10; /* Above cards */
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease; /* Added transform transition */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+.carousel-nav-btn:hover {
+    background-color: rgba(var(--accent-secondary-rgb), 0.9);
+    transform: translateY(-50%) scale(1.1); /* Scale up on hover */
+    box-shadow: 0 3px 7px rgba(0,0,0,0.25);
+}
+.carousel-nav-btn:active {
+    background-color: rgba(var(--accent-secondary-rgb), 1.0);
+    transform: translateY(-50%) scale(0.95); /* Scale down on active/click */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+.carousel-nav-btn.prev {
+    left: -15px; /* Adjust if padding on viewport is different */
+}
+.carousel-nav-btn.next {
+    right: -15px; /* Adjust if padding on viewport is different */
+}
+
+
+/* Slider Indicators (can be kept or restyled) */
+.slider-indicators {
+    display: flex;
+    justify-content: center;
+    margin-top: 1.5rem; /* Space above indicators */
+}
+.indicator-dot { 
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: var(--bg-accent); /* Inactive dot color */
+    margin: 0 5px; /* Space between dots */
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    cursor: pointer;
+    border: 1px solid var(--text-secondary); /* Subtle border */
+}
+.indicator-dot.active {
+    background-color: var(--accent-primary); /* Active dot color */
+    transform: scale(1.25); /* Slightly larger active dot */
+    border-color: var(--accent-secondary);
+}
+
+/* Interaction Reminder Text */
+.interaction-reminder {
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+/* Tool Description Panel */
+#toolDescriptionPanel {
+    /* z-index is set in HTML via Tailwind (e.g., z-50) */
+    /* hidden-section class handles visibility */
+    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+}
+#toolDescriptionPanel.hidden-section {
+    opacity: 0;
+    visibility: hidden;
+}
+#toolDescriptionPanel:not(.hidden-section) {
+    opacity: 1;
+    visibility: visible;
+    display: flex; /* Ensures it's shown correctly */
+}
+
+.description-panel-content {
+    background-color: #2a2a3f; /* var(--bg-accent) */
+    border: 1px solid var(--accent-primary);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    color: var(--text-primary);
+    max-height: 80vh; /* Prevent panel from being too tall */
+    overflow-y: auto; /* Scroll if content exceeds max height */
+}
+
+#descriptionPanelTitle {
+    color: var(--accent-primary);
+    border-bottom: 1px solid rgba(var(--accent-primary-rgb, 255, 215, 0), 0.3); /* Using RGB var */
+    padding-bottom: 0.5rem;
+}
+#descriptionPanelText {
+    color: var(--text-secondary);
+    font-size: 0.95rem; /* Slightly larger text */
+}
+
+#closeDescriptionPanelBtn {
+    color: var(--text-secondary);
+}
+#closeDescriptionPanelBtn:hover {
+    color: var(--accent-primary);
+}
+
+
+/* Responsive adjustments for new carousel */
+@media (max-width: 1024px) {
+    /* Adjust card sizes for tablets if needed */
+    .tool-card {
+        width: 260px; /* Slightly smaller cards for tablets */
+        min-height: 360px;
+    }
+     .carousel-viewport {
+        padding: 0 20px; /* Adjust padding if nav buttons are too far out */
+    }
+    .carousel-nav-btn.prev { left: -5px; }
+    .carousel-nav-btn.next { right: -5px; }
+}
+
+@media (max-width: 768px) {
+    .carousel-viewport {
+        padding: 0 10px; /* Minimal padding for nav buttons on mobile */
+        /* height: 300px; Removed fixed height */
+    }
+    .tool-card {
+        width: calc(80vw - 20px); /* Make cards responsive to viewport width, accounting for margin */
+        /* max-width: 240px; /* Optional max width for very small cards */
+        margin: 0 10px;
+        min-height: auto; /* Let content define height on mobile */
+    }
+    .tool-card-image {
+        height: 150px; /* Smaller image height on mobile */
+    }
+    .tool-card h3 { font-size: 1rem; }
+    .tool-card .tool-card-short-desc { font-size: 0.8rem; }
+
+    .carousel-nav-btn {
+        width: 35px;
+        height: 35px;
+        font-size: 20px;
+    }
+    .carousel-nav-btn.prev { left: 0px; } /* Closer to edge */
+    .carousel-nav-btn.next { right: 0px; } /* Closer to edge */
+
+    .interaction-reminder { font-size: 0.75rem; }
+    .description-panel-content { max-width: 90vw; } /* Ensure panel fits */
+    #descriptionPanelTitle { font-size: 1.5rem; }
+    #descriptionPanelText { font-size: 0.9rem; }
+
+}
+/* --- End Tool Carousel Components --- */
+
+/* General Button Components */
+.btn {
+    background-color: var(--accent-primary);
+    color: var(--bg-primary); /* Ensure high contrast */
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+    text-align: center;
+    cursor: pointer;
+    border: 1px solid transparent; /* For consistency */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+.btn:hover {
+    background-color: var(--accent-secondary);
+    transform: translateY(-2px); /* Subtle lift effect */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+.btn:active {
+    background-color: var(--accent-secondary); /* Or a slightly darker primary */
+    transform: translateY(0px); /* Pressed down effect */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2); /* Smaller shadow */
+}
+
+.btn-secondary {
+    background-color: var(--bg-accent);
+    color: var(--text-primary);
+    border: 1px solid var(--accent-primary);
+}
+.btn-secondary:hover {
+    background-color: var(--accent-primary);
+    color: var(--bg-primary);
+    border-color: var(--accent-secondary);
+    transform: translateY(-2px); /* Consistent lift */
+    box-shadow: 0 4px 8px rgba(var(--accent-primary-rgb), 0.3); /* Shadow matches new bg */
+}
+
+.btn-secondary:active {
+    background-color: var(--accent-primary); /* Keep hover color */
+    color: var(--bg-primary);
+    border-color: var(--accent-secondary);
+    transform: translateY(0px); /* Pressed down */
+    box-shadow: 0 2px 4px rgba(var(--accent-primary-rgb), 0.2);
+}
+
+/* General Section Text Components */
+.section-header {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(2rem, 6vw, 3rem); /* Responsive font size */
+    font-weight: 700; /* Orbitron bold weight */
+    color: var(--text-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin-bottom: 0.75rem; /* Spacing below the header */
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid rgba(var(--accent-primary-rgb), 0.3);
+    display: inline-block; /* To make border-bottom only span the text width */
+}
+.section-subheader {
+    font-size: 1.25rem; /* Default size */
+    color: var(--text-secondary);
+    margin-bottom: 2.5rem;
+    max-width: 700px; /* Limit width for readability */
+    text-align: center; /* Center the subheader text */
+    line-height: 1.6;
+}
+
+#norsu .info-panel {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--bg-accent); /* Subtler border */
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+#norsu .info-panel:hover {
+    box-shadow: 0 8px 25px rgba(var(--accent-primary-rgb), 0.15); /* Assuming --accent-primary is rgb */
+    border-color: rgba(var(--accent-primary-rgb), 0.5); /* Assuming --accent-primary is rgb */
+}
+#norsu .info-panel > h3 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--accent-primary);
+    margin-bottom: 1.25rem;
+    text-align: left; /* Align heading to the left */
+}
+.styled-list {
+    list-style-position: outside; /* Markers outside the text block */
+    list-style-type: disc; /* Or other desired style */
+    padding-left: 1.5rem; /* Indentation for list items */
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    text-align: left; /* Align list items to the left */
+}
+.styled-list li {
+    padding-left: 0.5rem; /* Space between marker and text */
+    margin-bottom: 0.75rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+.styled-list li::marker {
+    color: var(--accent-primary);
+}
+.styled-list strong {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+/* Modal Component */
+#toolModal { /* This is the backdrop */
+    background-color: rgba(0, 0, 0, 0.85); /* Darker backdrop */
+    /* z-index is set in HTML by Tailwind (e.g., z-50) */
+}
+#toolModal > div { /* This is the modal content box */
+    background-color: var(--bg-secondary);
+    background-image: linear-gradient(rgba(255,255,255,0.03), rgba(0,0,0,0.03)); /* Subtle gradient */
+    border: 2px solid var(--accent-primary); /* Slightly thicker border */
+    box-shadow: 0 0 25px rgba(var(--accent-primary-rgb), 0.3); /* Assuming --accent-primary is rgb */
+    border-radius: 12px; /* Match other rounded elements */
+}
+#toolModalTitle { /* Already styled in HTML via Tailwind, but can be augmented */
+    font-family: 'Orbitron', sans-serif;
+    color: var(--accent-primary); /* Ensure color matches theme */
+}
+#toolModalMessage {
+    color: var(--text-secondary);
+    font-size: 1rem;
+}
+
+/* Back to Top Button */
+#backToTopBtn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: var(--accent-primary);
+    color: var(--bg-primary); /* Text color for contrast */
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    font-size: 24px;
+    cursor: pointer;
+    display: none; /* Hidden by default, shown by JS */
+    z-index: 999; /* Ensure it's above most content */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    transition: background-color 0.3s, transform 0.3s;
+}
+#backToTopBtn:hover {
+    background-color: var(--accent-secondary);
+    transform: scale(1.1); /* Slight zoom on hover */
+}
+
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 1024px) {
+    #home > .container { /* Already in layout.css */
+        /* flex-direction: column; */
+        /* justify-content: center; */
+    }
+    #homeTextPanel { /* Already in layout.css */
+        /* margin-bottom: 2rem; */
+        /* max-width: 600px; */
+    }
+    #earthContainerWrapper { /* Style for home page earth placement */
+        width: 80vw;        /* Make it responsive */
+        height: 60vh;       /* Adjust height */
+        margin-left: 0;     /* Original had auto, might need adjustment if centered */
+        padding-left: 0;    /* Original had padding */
+    }
+}
+
+@media (max-width: 768px) {
+    #mainGeoRealmTitle {
+        font-size: clamp(2.2rem, 7vw, 3.5rem); /* Adjust for smaller screens */
+    }
+    #homeTextPanel {
+        padding: clamp(1.2rem, 3vw, 1.8rem); /* Smaller padding */
+    }
+    #earthContainerWrapper {
+        width: 90vw; /* Wider on mobile */
+        height: 50vh; /* Adjust height */
+    }
+    .section-header { font-size: 2rem; }
+    .section-subheader { font-size: 1.1rem; }
+
+    .carousel-viewport {
+        max-width: calc(100vw - 40px); /* Ensure some padding on small screens */
+        /* height: 300px; Removed fixed height from original */
+    }
+    .tool-card {
+        width: 220px; /* Smaller cards */
+        min-height: auto; /* Let content define height */
+        padding: 1rem;
+    }
+    .tool-card h3 { font-size: 1.1rem; } /* Keep titles readable */
+    .tool-card p { font-size: 0.8rem; } /* Smaller description text */
+
+
+    #norsu .info-panel > h3 { font-size: 1.3rem; }
+    .styled-list { padding-left: 1rem; }
+    .styled-list li { margin-bottom: 0.5rem; }
+}
+
+/* Footer Component */
+#siteFooter {
+    background-color: var(--bg-primary); /* Dark background */
+    color: var(--text-secondary); /* Light gray text */
+    padding: 1.5rem 1rem; /* Padding */
+    text-align: center;
+    border-top: 1px solid var(--bg-accent); /* Subtle top border */
+    position: relative; /* Or static if at the very end */
+    width: 100%;
+    z-index: 500; /* Above global background if one exists */
+}
+#siteFooter .footer-content { font-size: 0.9rem; }
+#siteFooter .footer-content a { color: var(--accent-primary); text-decoration: none; transition: color 0.3s ease; }
+#siteFooter .footer-content a:hover { color: var(--accent-secondary); }
+
+@media (max-width: 768px) {
+    #siteFooter { padding: 1rem; }
+    #siteFooter .footer-content { font-size: 0.8rem; }
+}
+
+/* --- About Us Section / Credits Roll --- */
+#aboutUs .container {
+    /* py-16 already in HTML, adjust if needed */
+    max-width: 800px; /* Limit width of the credits content area */
+}
+
+.credits-roll-container {
+    height: 60vh; /* Adjust height as needed, make it viewport relative */
+    max-height: 500px; /* Max fixed height */
+    overflow-y: auto; /* Enable vertical scrolling */
+    background-color: rgba(0, 0, 0, 0.7); /* Dark semi-transparent background */
+    border: 1px solid var(--bg-accent);
+    border-radius: 8px;
+    padding: 2rem 1rem;
+    color: var(--text-secondary); /* Light text for names */
+    text-align: center; /* Center the content within */
+    scrollbar-width: thin; /* For Firefox */
+    scrollbar-color: var(--accent-primary) var(--bg-secondary); /* For Firefox */
+}
+
+/* Webkit scrollbar styling */
+.credits-roll-container::-webkit-scrollbar {
+    width: 8px;
+}
+.credits-roll-container::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+    border-radius: 4px;
+}
+.credits-roll-container::-webkit-scrollbar-thumb {
+    background-color: var(--accent-primary);
+    border-radius: 4px;
+    border: 2px solid var(--bg-secondary);
+}
+.credits-roll-container::-webkit-scrollbar-thumb:hover {
+    background-color: var(--accent-secondary);
+}
+
+.credit-item {
+    margin-bottom: 2.5rem; /* Space between each credit item */
+    opacity: 0; /* For staggered animation if implemented */
+    transform: translateY(20px); /* For staggered animation if implemented */
+    animation: fadeInCredit 0.5s ease-out forwards;
+}
+
+.credit-item img {
+    width: 120px; /* Adjust size as needed */
+    height: 120px;
+    border-radius: 50%; /* Circular images */
+    object-fit: cover;
+    margin: 0 auto 0.75rem auto; /* Center image and add space below */
+    border: 3px solid var(--accent-tertiary); /* Teal border */
+    box-shadow: 0 0 15px rgba(var(--accent-tertiary-rgb), 0.5);
+}
+
+.credit-item .credit-name {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.25rem; /* Name font size */
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: 0.02em;
+}
+
+/* Optional: Add a subtle role/title style if needed later */
+.credit-item .credit-role {
+    font-size: 0.9rem;
+    color: var(--accent-primary);
+    display: block;
+    margin-top: 0.25rem;
+}
+
+/* Staggered animation for credit items */
+@keyframes fadeInCredit {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Ensure buttons in this section are styled correctly */
+#aboutUs .btn-secondary {
+    margin-top: 2rem;
+}
+
+/* Terra-Trivia Component Styles */
+#terraTriviaContainer {
+    /* Using Tailwind classes in HTML for most styling, can add specifics here */
+    border-color: rgba(var(--accent-primary-rgb), 0.3); /* Ensure border uses RGB variable */
+    max-width: 450px; /* Limit width on larger screens */
+    transition: all 0.3s ease-out;
+}
+
+#terraTriviaContent h4 {
+    font-family: 'Orbitron', sans-serif;
+    color: var(--accent-secondary);
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+}
+
+#terraTriviaContent p {
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+#terraTriviaContent .quiz-options button {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 0.6rem 1rem;
+    margin-bottom: 0.5rem;
+    background-color: rgba(var(--bg-secondary-rgb), 0.7);
+    border: 1px solid rgba(var(--accent-secondary-rgb), 0.3);
+    color: var(--text-secondary);
+    border-radius: 6px;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+#terraTriviaContent .quiz-options button:hover {
+    background-color: rgba(var(--accent-secondary-rgb), 0.2);
+    border-color: var(--accent-secondary);
+    color: var(--accent-secondary);
+}
+
+#terraTriviaContent .quiz-options button.correct {
+    background-color: rgba(var(--accent-tertiary-rgb), 0.3); /* Teal for correct */
+    border-color: var(--accent-tertiary);
+    color: var(--accent-tertiary);
+}
+
+#terraTriviaContent .quiz-options button.incorrect {
+    background-color: rgba(255, 100, 100, 0.3); /* Reddish for incorrect */
+    border-color: rgba(255, 100, 100, 0.7);
+    color: rgba(255, 180, 180, 1);
+}
+
+#terraTriviaContent .quiz-feedback {
+    font-size: 0.9rem;
+    font-style: italic;
+    margin-top: 0.75rem;
+}
+
+#terraTriviaContent .quiz-feedback.correct {
+    color: var(--accent-tertiary);
+}
+
+#terraTriviaContent .quiz-feedback.incorrect {
+    color: rgba(255, 150, 150, 1);
+}
+
+#nextTerraTriviaBtn {
+    /* Using Tailwind and .btn-secondary already. Can add specifics if needed */
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+}
+

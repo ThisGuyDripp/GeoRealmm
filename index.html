@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GeoRealm - NORSU Geo Tools</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="base.css">
+    <link rel="stylesheet" href="layout.css">
+    <link rel="stylesheet" href="components.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+
+    <link rel="icon" href="favicon.ico" sizes="any"> <link rel="icon" href="favicon.svg" type="image/svg+xml"> <link rel="apple-touch-icon" href="apple-touch-icon.png"> </head>
+<body>
+    <canvas id="spaceBackgroundCanvas"></canvas>
+
+    <header id="mainHeader">
+        <div class="header-content container mx-auto">
+            <div class="logo-title">GeoRealm</div>
+            <nav id="mainNav">
+                <a href="#" id="navHome" class="nav-link">Home</a>
+                <a href="#" id="navNorsu" class="nav-link">NORSU Innovations</a>
+                <a href="#" id="navTools" class="nav-link">Geo Tools</a>
+                <a href="#" id="navAboutUs" class="nav-link">About Us</a>
+            </nav>
+        </div>
+    </header>
+
+    <main id="pageContent">
+        <section id="home" class="section active">
+            <div class="container mx-auto flex flex-col lg:flex-row items-center lg:justify-start w-full h-full px-4 sm:px-6 lg:px-8 relative">
+                <div class="w-full lg:w-5/12 xl:w-4/12 flex flex-col items-center lg:items-start text-center lg:text-left relative z-10 py-8 lg:pr-8">
+                    <h1 id="mainGeoRealmTitle">GEOREALM</h1>
+                    <div id="homeTextPanel">
+                        <p class="text-lg md:text-xl mb-8" style="color: var(--text-primary); line-height: 1.75;">
+                            Embark on a journey through the fascinating world of geology and earth sciences. Discover interactive tools and resources designed to illuminate the complexities of our planet, brought to you by the innovators at NORSU.
+                        </p>
+                        <button id="exploreNorsuBtn" class="btn text-lg">
+                            Explore NORSU's Innovations
+                        </button>
+                    </div>
+
+                    <!-- Terra-Trivia Section -->
+                    <div id="terraTriviaContainer" class="mt-8 p-6 bg-gray-800 bg-opacity-70 backdrop-blur-sm rounded-lg border border-accent-primary-transparent shadow-xl">
+                        <div id="terraTriviaContent">
+                            <!-- Trivia/Quiz will be loaded here -->
+                            <p class="text-text-secondary italic">Loading interesting facts...</p>
+                        </div>
+                        <button id="nextTerraTriviaBtn" class="btn btn-secondary text-sm mt-4">Next Fact / Question</button>
+                    </div>
+                    <!-- End Terra-Trivia Section -->
+
+                </div>
+                <div id="earthContainerWrapper" class="w-full lg:w-7/12 xl:w-8/12">
+                    <div id="earthContainer">
+                         <div id="earthLoadingIndicator" class="loading-indicator" style="display: none;">
+                            <div class="spinner"></div>
+                            <p>Loading GeoRealm 3D Experience...</p>
+                        </div>
+                        <canvas id="earthCanvas"></canvas> 
+                        </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="norsu" class="section hidden-section">
+            <div class="container mx-auto text-center px-6 lg:px-8 py-8">
+                <h2 class="section-header">NORSU: Pioneering Geo-Education</h2>
+                <p class="section-subheader">
+                    Zooming into Negros Oriental State University, where future geoscientists are shaping the way we understand our world.
+                </p>
+                <div class="map-placeholder my-12 mx-auto shadow-2xl">
+                    <iframe
+                        src="https://maps.google.com/maps?q=9.31194,123.30333&z=15&hl=en&output=embed"
+                        width="100%"
+                        height="100%"
+                        style="border:0;"
+                        allowfullscreen=""
+                        loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
+                </div>
+                <div class="info-panel p-8 rounded-xl shadow-xl max-w-3xl mx-auto">
+                    <h3>Student-Developed Tools & Resources:</h3>
+                    <ul class="styled-list mx-auto max-w-md">
+                        <li><strong>1st Year Students:</strong> Mineral Scanner App (Conceptual), Introductory Videos</li>
+                        <li><strong>2nd Year Students:</strong> Miller Indices Tool, Bravais Lattice Mini-Game, 3D Crystal Models</li>
+                    </ul>
+                    <button id="tryToolsBtn" class="btn mt-10 text-lg">Try Our Geo Tools!</button>
+                </div>
+                <button id="backToHomeBtn" class="btn btn-secondary mt-8 text-md">Back to GeoRealm Home</button>
+            </div>
+        </section>
+
+        <section id="tools" class="section hidden-section">
+            <div class="container mx-auto text-center px-6 lg:px-8 py-8 w-full">
+                <h2 class="section-header">Discover the Geo Tools Suite</h2>
+                <p class="section-subheader">
+                    Navigate through our collection of innovative tools. 
+                    <span class="interaction-reminder block mt-2 text-sm text-gray-400">(Hover over a tool, or tap and hold on touch devices, to reveal more details.)</span>
+                </p>
+                <div class="carousel-container relative mt-12">
+                    <button id="carouselPrevBtn" class="carousel-nav-btn prev" aria-label="Previous Tool">‹</button>
+                    <div class="carousel-viewport">
+                        <div id="toolCardContainer" class="tool-card-container">
+                            <div class="tool-card pulsing-load" data-tool-name="Miller Indices Calculator" data-tool-icon="📐" data-tool-description="Easily calculate Miller indices for crystallographic planes. A fundamental tool for understanding crystal structures.">
+                                <img src="https://placehold.co/600x400/4A3F35/FFFFFF?text=Miller+Indices" alt="Miller Indices Calculator" class="tool-card-image">
+                                <div class="tool-card-overlay">
+                                    <i class="tool-icon">📐</i>
+                                    <h3>Miller Indices Calculator</h3>
+                                    <p class="tool-card-short-desc">Calculate Miller indices for crystallographic planes.</p>
+                                </div>
+                            </div>
+                            <div class="tool-card pulsing-load" data-tool-name="Mineralogy Video Library" data-tool-icon="🎞️" data-tool-description="Watch engaging videos explaining key concepts in mineralogy, from identification to formation. Explore our curated collection.">
+                                <img src="https://placehold.co/600x400/4A3F35/FFFFFF?text=Video+Library" alt="Mineralogy Video Library" class="tool-card-image">
+                                <div class="tool-card-overlay">
+                                    <i class="tool-icon">🎞️</i>
+                                    <h3>Mineralogy Video Library</h3>
+                                    <p class="tool-card-short-desc">Watch engaging videos on mineralogy concepts.</p>
+                                </div>
+                            </div>
+                            <div class="tool-card pulsing-load" data-tool-name="Mineral Scanner App (Concept)" data-tool-icon="💡" data-tool-description="A conceptual app for identifying minerals using your device's camera (simulated experience). Discover the future of field geology.">
+                                <img src="https://placehold.co/600x400/4A3F35/FFFFFF?text=Mineral+Scanner" alt="Mineral Scanner App (Concept)" class="tool-card-image">
+                                <div class="tool-card-overlay">
+                                    <i class="tool-icon">💡</i>
+                                    <h3>Mineral Scanner App (Concept)</h3>
+                                    <p class="tool-card-short-desc">Conceptual app for identifying minerals (simulated).</p>
+                                </div>
+                            </div>
+                            <div class="tool-card pulsing-load" data-tool-name="Bravais Lattice Mini-Game" data-tool-icon="🎲" data-tool-description="Learn the 14 Bravais lattices through an interactive and fun mini-game. Test your knowledge of crystal systems!">
+                                <img src="https://placehold.co/600x400/4A3F35/FFFFFF?text=Bravais+Game" alt="Bravais Lattice Mini-Game" class="tool-card-image">
+                                <div class="tool-card-overlay">
+                                    <i class="tool-icon">🎲</i>
+                                    <h3>Bravais Lattice Mini-Game</h3>
+                                    <p class="tool-card-short-desc">Interactive mini-game for learning Bravais lattices.</p>
+                                </div>
+                            </div>
+                            <div class="tool-card pulsing-load" data-tool-name="3D Crystal Systems Viewer" data-tool-icon="💎" data-tool-description="Visualize the seven crystal systems in interactive 3D. Rotate and explore their unique symmetries and forms.">
+                                <img src="https://placehold.co/600x400/4A3F35/FFFFFF?text=3D+Crystals" alt="3D Crystal Systems Viewer" class="tool-card-image">
+                                <div class="tool-card-overlay">
+                                    <i class="tool-icon">💎</i>
+                                    <h3>3D Crystal Systems Viewer</h3>
+                                    <p class="tool-card-short-desc">Visualize crystal systems in interactive 3D.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button id="carouselNextBtn" class="carousel-nav-btn next" aria-label="Next Tool">›</button>
+                </div>
+                <div id="sliderIndicators" class="slider-indicators mt-6"></div> <button id="backToNorsuBtn" class="btn btn-secondary mt-12 text-md">Back to NORSU Innovation</button>
+            </div>
+        </section>
+
+        <section id="aboutUs" class="section hidden-section">
+            <div class="container mx-auto text-center px-6 lg:px-8 py-16 w-full">
+                <h2 class="section-header">Meet the Team</h2>
+                <div id="creditsRoll" class="credits-roll-container mt-8">
+                    <!-- Credits will be populated here by JavaScript -->
+                </div>
+                <button id="backToHomeFromAboutBtn" class="btn btn-secondary mt-12 text-md">Back to GeoRealm Home</button>
+            </div>
+        </section>
+
+        </main>
+
+    <footer id="siteFooter">
+        <div class="footer-content container mx-auto">
+            <p>&copy; 2024 GeoRealm by NORSU Innovators. All rights reserved.</p>
+            <p>Designed with passion for Earth Sciences.</p>
+        </div>
+        </footer>
+
+    <div id="toolDescriptionPanel" class="fixed inset-0 items-center justify-center p-4 z-50 hidden-section"> <div class="description-panel-content bg-gray-800 p-6 rounded-lg shadow-xl max-w-md w-full relative text-left">
+            <button id="closeDescriptionPanelBtn" class="absolute top-2 right-3 text-gray-400 hover:text-white text-2xl">×</button>
+            <h3 id="descriptionPanelTitle" class="text-2xl font-semibold mb-3 text-accent-primary">Tool Details</h3>
+            <p id="descriptionPanelText" class="text-gray-300 text-sm leading-relaxed">Detailed description will appear here.</p>
+        </div>
+    </div>
+
+    <button id="backToTopBtn" title="Go to top">↑</button> <script src="three-scene.js"></script>
+    <script src="tool-carousel.js"></script>
+    <script src="script.js"></script> 
+    <script src="audio-player.js"></script>
+</body>
+</html>

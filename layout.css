@@ -1,0 +1,152 @@
+/* Main Header Layout */
+#mainHeader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: var(--header-height); /* Defined in base.css or :root */
+    z-index: 1000; /* High z-index to stay on top */
+    background-color: rgba(60, 60, 70, 0.85); /* Semi-transparent dark background */
+    backdrop-filter: blur(10px); /* Frosted glass effect */
+    -webkit-backdrop-filter: blur(10px); /* For Safari */
+    border-bottom: 1px solid rgba(var(--accent-primary-rgb), 0.2); /* Assuming --accent-primary is rgb for rgba */
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3); /* Subtle shadow */
+    padding: 0 1rem; /* Horizontal padding */
+}
+
+#mainHeader::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px; /* Height of the shimmer line */
+    background: linear-gradient(
+        90deg,
+        transparent,
+        var(--header-gradient-shimmer), /* Color from base.css */
+        transparent
+    );
+    background-size: 200% 100%;
+    animation: shimmer-gradient 10s linear infinite;
+}
+
+@keyframes shimmer-gradient {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+.header-content {
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    /* Max width for header content can be set on .container if used */
+}
+
+/* Main Page Content Wrapper */
+#pageContent {
+    padding-top: var(--header-height); /* Space for the fixed header */
+    min-height: calc(100vh - var(--header-height)); /* Ensure content area fills at least the viewport minus header */
+    position: relative; /* For z-indexing context if needed */
+    padding-bottom: 80px; /* Approximate space for footer */
+}
+
+/* General Section Layout */
+.section {
+    min-height: calc(100vh - var(--header-height) - 80px); /* Account for header and footer height */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 3rem 1rem; /* Default padding */
+    opacity: 0; /* Start hidden for fade-in */
+    transform: translateY(20px); /* Start slightly lower for fade-in */
+    transition: opacity 1s ease-out, transform 1s ease-out;
+    position: absolute; /* For stacking sections */
+    width: 100%;
+    top: 0;
+    left: 0;
+    /* background-color: transparent; */ /* Original did not specify, relies on body or #spaceBackgroundCanvas */
+}
+
+.section.active {
+    opacity: 1;
+    transform: translateY(0);
+    z-index: 10; /* Active section on top */
+    position: relative; /* Take up space in normal flow when active */
+}
+
+.hidden-section { /* Used to hide non-active sections */
+    display: none !important; /* Completely remove from layout */
+    opacity: 0;
+    z-index: 1; /* Lower z-index than active */
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 1024px) { /* Tablet and below */
+    #home > .container {
+        flex-direction: column; /* Stack text and earth container */
+        justify-content: center;
+    }
+    #home .lg\:w-5\/12 { /* Text panel wrapper (Tailwind class) */
+        width: 100%; /* Full width on smaller screens */
+        max-width: 600px; /* Limit max width for readability */
+        margin-bottom: 2rem; /* Space below text panel */
+    }
+    #home #earthContainerWrapper { /* Earth visualization wrapper */
+        width: 80vw; /* Responsive width */
+        max-width: 500px; /* Max width for the earth viz */
+        height: auto; /* Maintain aspect ratio */
+        aspect-ratio: 1 / 1; /* Make it square-ish */
+        margin-left: auto; /* Center if full width not taken */
+        margin-right: auto;
+        padding-left: 0; /* Reset Tailwind padding if needed */
+    }
+}
+
+@media (max-width: 768px) { /* Mobile */
+    .section {
+        padding: 2rem 1rem; /* Smaller padding on mobile */
+        min-height: calc(100vh - var(--header-height) - 60px); /* Adjust for potentially smaller footer */
+    }
+    #mainHeader {
+        padding: 0 0.5rem; /* Less padding for header */
+    }
+    .header-content {
+        flex-direction: column; /* Stack logo and nav on mobile */
+        justify-content: center;
+        padding: 0.5rem 0;
+        height: auto; /* Allow header to grow */
+    }
+    #mainNav {
+        margin-top: 0.5rem; /* Space between logo and nav */
+        display: flex;
+        flex-wrap: wrap; /* Allow nav items to wrap */
+        justify-content: center;
+    }
+    #mainNav a.nav-link {
+        margin-left: 10px; /* Adjust spacing for wrapped items */
+        margin-right: 10px;
+    }
+    #pageContent {
+        /* If header height is dynamic due to wrapping, this might need JS adjustment or different strategy */
+        padding-top: calc(var(--header-height) + 40px); /* Approximate increased header height */
+        padding-bottom: 60px; /* Space for smaller footer */
+    }
+    #home #earthContainerWrapper {
+        width: 90vw; /* Wider on mobile */
+        max-width: 400px; /* Adjust max width for earth */
+    }
+}
+
+@media (min-width: 1024px) { /* lg and up */
+    #home > .container {
+        flex-direction: row;
+    }
+    #homeTextPanel {
+        /* margin-right: 2rem; */ /* Removed to allow Earth to shift left */
+        text-align: left;
+        align-items: flex-start;
+    }
+}
