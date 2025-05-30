@@ -12,6 +12,30 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <style>
+        .viewer-nav-button-container {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        .viewer-nav-button {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            background-color: var(--accent-secondary, #5a8fba);
+            color: var(--button-text-color, #FFFFFF);
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+            border: 1px solid rgba(var(--accent-primary-rgb, 255, 215, 0), 0.3);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .viewer-nav-button:hover {
+            background-color: var(--accent-secondary-dark, #4a7da7);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+    </style>
 </head>
 <body>
     <canvas id="spaceBackgroundCanvas"></canvas>
@@ -21,7 +45,6 @@
             <div class="logo-title">GeoRealm</div>
             <nav id="mainNav">
                 <a href="../index.html#tools" class="nav-link">Back to Geo Tools</a>
-                <a href="animated_viewer.html" class="nav-link">Animated Models</a>
                 <a href="../index.html" class="nav-link">Home</a>
             </nav>
         </div>
@@ -29,6 +52,9 @@
 
     <main class="page-main-content">
         <div class="content-wrapper viewer-page-content">
+            <div class="viewer-nav-button-container">
+                <a href="animated_viewer.html" class="viewer-nav-button">View Animated Models</a>
+            </div>
             <h1>Static 3D Crystal Models</h1>
             <div id="controlsContainer">
                 <label for="modelSelect">Select Model:</label>
