@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Miller Indices Visualization</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles to match the original tool's appearance */
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #f0f0f0; /* A neutral background */
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Align to top for potentially long content */
+            min-height: 100vh;
+            padding: 20px;
+        }
+        #container {
+            position: relative;
+            width: 520px; /* Increased slightly to accommodate padding/border */
+            background-color: white;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        #kanvas {
+            width: 480px;
+            min-height: 300px; /* Original height */
+            max-height: 300px; /* Original height */
+            margin: 0 auto;
+            border: 2px solid blue;
+            position: relative;
+            background-color: white; /* Ensure canvas background is white */
+            border-radius: 6px; /* Slightly rounded corners for the canvas */
+            overflow: hidden; /* Clip content that might overflow, like the SVG */
+        }
+        #cc {
+            position: absolute;
+            bottom: 0px; /* Positioned at the bottom of the kanvas */
+            left: 0px;
+            width: 100%;
+            height: 40px; /* Explicit height */
+            padding: 0 5px; /* Padding for image spacing */
+            box-sizing: border-box;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        #para {
+            position: absolute;
+            bottom: 45px; /* Positioned above the #cc div */
+            left: 5px;
+            padding: 5px;
+            font-weight: bold;
+            font-size: 10px; /* Slightly smaller for better fit */
+            color: blue;
+            border: 1px solid #000000;
+            background-color: white;
+            visibility: hidden;
+            border-radius: 4px;
+            z-index: 10; /* Ensure it's above other elements */
+        }
+        .leftText {
+            padding: 7px;
+            width: 100%; /* Take full width of kanvas */
+            text-align: justify;
+            font-size: 15px;
+        }
+        .input-area p {
+            color: blue;
+            margin-bottom: 10px;
+        }
+        .input-area input[type="text"] {
+            border: 1px solid #ccc;
+            padding: 5px;
+            border-radius: 4px;
+            width: 80px; /* Adjusted width */
+        }
+        .input-area input[type="button"] {
+            background-color: #4A90E2; /* A pleasant blue */
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .input-area input[type="button"]:hover {
+            background-color: #357ABD;
+        }
+        #warn_txt {
+            color: red;
+            font-size: 13px;
+            min-height: 20px; /* Reserve space for warning */
+            margin-top: 5px;
+        }
+        .miller-display span {
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        .overline {
+            text-decoration: overline;
+        }
+        #svgContainer {
+            width: 100%; /* SVG takes full width of its container */
+            height: 180px; /* Original SVG height */
+            display: flex;
+            justify-content: center; /* Center SVG content if it's smaller */
+            align-items: center;
+        }
+        /* Tailwind overrides if needed */
+        .font-arial { font-family: Arial, Helvetica, sans-serif; }
+
+        /* Header styling */
+        .header-title {
+            font-size: 1.5rem; /* 24px */
+            font-weight: bold;
+            color: #333;
+            text-align: center;
+            margin-bottom: 5px;
+        }
+        .header-subtitle {
+            font-size: 0.9rem; /* 14px */
+            color: #555;
+            text-align: center;
+            margin-bottom: 15px;
+            max-width: 450px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+    </style>
+</head>
+<body>
+
+<div id="container" class="font-arial">
+    <h1 class="header-title">Draw your own lattice planes</h1>
+    <p class="header-subtitle">
+        This simulation generates images of lattice planes. To see a plane, enter a set of Miller indices
+        (each index between -6 and 6), the numbers separated by a semi-colon, then click "View" or press
+        Enter.
+    </p>
+
+    <div id="kanvas">
+        <div class="leftText">
+            <div class="input-area">
+                <p>Enter Miller indices (index max 6), e.g.
+                    <input type="text" size="7" id="index_txt" value="1;1;1">
+                    <input type="button" id="view_btn" value="View">
+                    (<span id="displayH_txt" class="miller-display"></span><span id="displayK_txt" class="miller-display"></span><span id="displayL_txt" class="miller-display"></span>)
+                </p>
+            </div>
+
+            <div id="svgContainer">
+                <svg width="470" height="180" id="svg1" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <marker id="arrow" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto" markerUnits="strokeWidth">
+                            <path d="M0,0 L0,6 L4,3 z" fill="green" />
+                        </marker>
+                    </defs>
+                    <line x1="221" y1="130" x2="116" y2="175" stroke="green" stroke-width="2" id="axisX" marker-end="url(#arrow)"></line>
+                    <line x1="221" y1="130" x2="221" y2="7" stroke="green" stroke-width="2" id="axisZ" marker-end="url(#arrow)"></line>
+                    <line x1="221" y1="130" x2="350" y2="130" stroke="green" stroke-width="2" id="axisY" marker-end="url(#arrow)"></line>
+                    <text x="100" y="180" style="font-size:13px; font-weight:bold;">X</text>
+                    <text x="360" y="135" style="font-size:13px; font-weight:bold;">Y</text>
+                    <text x="205" y="15" style="font-size:13px; font-weight:bold;">Z</text> <line x1="150" y1="60" x2="221" y2="30" stroke="blue" stroke-dasharray="2,2" id="cube_edge_back_left_top"></line> <line x1="221" y1="30" x2="321" y2="30" stroke="black" stroke-dasharray="2,2" id="cube_edge_back_top_horizontal"></line> <line x1="250" y1="60" x2="321" y2="30" stroke="blue" stroke-dasharray="2,2" id="cube_edge_back_right_top"></line> <line x1="150" y1="160" x2="221" y2="130" stroke="blue" id="cube_edge_front_left_bottom_to_origin_plane_x"></line>
+                    <line x1="250" y1="160" x2="321" y2="130" stroke="blue" id="cube_edge_front_right_bottom_to_origin_plane_y"></line>
+                    
+                    <rect x="150" y="60" width="100" height="100" style="fill:none; stroke-width:1;stroke:#000" id="cube_front_face"></rect>
+                    
+                    <line x1="150" y1="60" x2="250" y2="60" stroke="black" id="cube_edge_front_top_horizontal"></line> <line x1="250" y1="60" x2="250" y2="160" stroke="black" id="cube_edge_front_right_vertical"></line> <line x1="150" y1="160" x2="250" y2="160" stroke="black" id="cube_edge_front_bottom_horizontal"></line> <line x1="221" y1="30" x2="221" y2="130" stroke="black" stroke-dasharray="2,2" id="cube_edge_back_vertical_at_origin_z"></line> <line x1="321" y1="30" x2="321" y2="130" stroke="black" stroke-dasharray="2,2" id="cube_edge_back_right_vertical"></line> <line x1="221" y1="130" x2="321" y2="130" stroke="black" stroke-dasharray="2,2" id="cube_edge_back_bottom_horizontal_at_origin_y"></line> <polyline id="miller_plane_shape" style="fill:#9a0000; fill-opacity:0.25; stroke:#9a0000; stroke-width:1;" points=""></polyline>
+                </svg>
+            </div>
+            <p id="warn_txt"></p>
+        </div>
+
+        <div id="para">
+            Re-use of this resource is governed by a Creative Commons Attribution-<br />
+            NonCommercial-ShareAlike 4.0 International<br />
+            <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" class="text-blue-600 hover:underline">https://creativecommons.org/licenses/by-nc-sa/4.0/</a>
+        </div>
+        <div id="cc">
+            <img src="https://placehold.co/120x40/EFEFEF/333333?text=CC+BY-NC-SA" alt="Creative Commons License" onMouseOver="showTxt()" onMouseOut="hideTxt()" style="height:35px; width:auto; border-radius:3px;">
+            <img src="https://placehold.co/180x40/EFEFEF/333333?text=DoITPoMS+Logo" alt="DoITPoMS logo placeholder" style="height:35px; width:auto; border-radius:3px;">
+        </div>
+    </div> </div> <script>
+    // --- Start of Miller Indices Visualization Script ---
+
+    // DOM Elements
+    const indexTxt = document.getElementById('index_txt');
+    const viewBtn = document.getElementById('view_btn');
+    const displayHTxt = document.getElementById('displayH_txt');
+    const displayKTxt = document.getElementById('displayK_txt');
+    const displayLTxt = document.getElementById('displayL_txt');
+    const millerPlaneShape = document.getElementById('miller_plane_shape');
+    const warnTxt = document.getElementById('warn_txt');
+    const paraDiv = document.getElementById('para');
+
+    // Parameters from original script
+    const hMax = 6;
+    const kMax = 6;
+    const lMax = 6;
+
+    const w = 71;       // A parameter related to the projection width of one side of the cube
+    const ht = 30;      // A parameter related to the projection height of one side of the cube
+    const a = 100;      // Represents the side length of the cube in the projected space along Y and Z axes
+    const aP = 23.2;    // Angle for the axonometric projection (degrees)
+
+    const aSide = Math.round(10 * Math.sqrt(w * w + ht * ht)) / 10; // Effective projected length of the cube's side along X
+    const angleP = aP * Math.PI / 180; // Projection angle in radians
+
+    const cube_x_origin = 221; // SVG x-coordinate of the cube's origin (back bottom corner)
+    const cube_y_origin = 130; // SVG y-coordinate of the cube's origin (back bottom corner)
+
+    // Variables for plane corner coordinates
+    let p_x0, p_y0, p_x1, p_y1, p_x2, p_y2, p_x3, p_y3;
+
+    // Transposition shifts for negative indices
+    const shiftX_val = aSide * Math.cos(angleP);
+    const shiftYX_val = aSide * Math.sin(angleP);
+    const shiftY_val = a;
+    const shiftZ_val = a;
+
+    // --- Utility Functions ---
+    function showTxt() {
+        paraDiv.style.visibility = 'visible';
+    }
+
+    function hideTxt() {
+        paraDiv.style.visibility = 'hidden';
+    }
+
+    // --- Transposition Functions (for negative indices) ---
+    function transposeX() {
+        p_x0 -= shiftX_val; p_y0 += shiftYX_val;
+        p_x1 -= shiftX_val; p_y1 += shiftYX_val;
+        p_x2 -= shiftX_val; p_y2 += shiftYX_val;
+        if (p_x3 !== undefined) { // For quadrilaterals
+            p_x3 -= shiftX_val; p_y3 += shiftYX_val;
+        }
+    }
+
+    function transposeY() {
+        p_x0 += shiftY_val;
+        p_x1 += shiftY_val;
+        p_x2 += shiftY_val;
+        if (p_x3 !== undefined) {
+            p_x3 += shiftY_val;
+        }
+    }
+
+    function transposeZ() {
+        p_y0 -= shiftZ_val;
+        p_y1 -= shiftZ_val;
+        p_y2 -= shiftZ_val;
+        if (p_x3 !== undefined) {
+            p_y3 -= shiftZ_val;
+        }
+    }
+
+    function transposeIfNeeded(h, k, l) {
+        // Important: Transposition logic from original code implies specific order or interpretation.
+        // The original code structure for transposition was:
+        // if (h < 0) transposeX();
+        // if (k < 0) transposeY();
+        // if (l < 0) transposeZ();
+        // This order might matter if transformations are not commutative in the intended geometric sense.
+
+        // Let's apply them based on the intercepts.
+        // If h is negative, the x-intercept is negative. We shift the plane.
+        if (h < 0) transposeX();
+        // If k is negative, the y-intercept is negative.
+        if (k < 0) transposeY();
+        // If l is negative, the z-intercept is negative.
+        if (l < 0) transposeZ();
+    }
+
+    // --- SVG Drawing Functions ---
+    function drawQuadrilateral(x0, y0, x1, y1, x2, y2, x3, y3) {
+        const points = `${x0},${y0} ${x1},${y1} ${x2},${y2} ${x3},${y3}`;
+        millerPlaneShape.setAttribute("points", points);
+    }
+
+    function drawTriangle(x0, y0, x1, y1, x2, y2) {
+        const points = `${x0},${y0} ${x1},${y1} ${x2},${y2}`;
+        millerPlaneShape.setAttribute("points", points);
+    }
+    
+    // --- Core Logic: Calculate and Draw Plane ---
+    function drawPlane(h, k, l) {
+        warnTxt.innerHTML = ""; // Clear previous warnings
+        millerPlaneShape.setAttribute("points", ""); // Clear previous plane
+
+        if (Math.abs(h) > hMax || Math.abs(k) > kMax || Math.abs(l) > lMax) {
+            warnTxt.innerHTML = `Indices must be between -${hMax} and ${hMax}.`;
+            return;
+        }
+        if (h === 0 && k === 0 && l === 0) {
+            warnTxt.innerHTML = "Cannot draw plane for (000).";
+            return;
+        }
+
+        // Calculate reciprocals for intercepts. Max value to avoid division by zero issues if not handled.
+        // The "infinity" concept is handled by how the points are calculated when an index is 0.
+        const recip_h = (h === 0) ? Infinity : 1 / h;
+        const recip_k = (k === 0) ? Infinity : 1 / k;
+        const recip_l = (l === 0) ? Infinity : 1 / l;
+
+        // Calculate intercept points in SVG coordinates
+        // Point Px on X-axis: (cube_x_origin - intercept_x * cos(angleP), cube_y_origin + intercept_x * sin(angleP))
+        // Point Py on Y-axis: (cube_x_origin + intercept_y, cube_y_origin)
+        // Point Pz on Z-axis: (cube_x_origin, cube_y_origin - intercept_z)
+
+        // Intercept lengths along axes from origin
+        const intercept_x_len = aSide * recip_h;
+        const intercept_y_len = a * recip_k;     // 'a' is the projected length along Y
+        const intercept_z_len = a * recip_l;     // 'a' is the projected length along Z
+
+        // Reset point coordinates
+        p_x0 = p_y0 = p_x1 = p_y1 = p_x2 = p_y2 = p_x3 = p_y3 = undefined;
+
+
+        if (h !== 0 && k !== 0 && l !== 0) { // Plane intersects all three axes (triangle)
+            p_x0 = cube_x_origin - intercept_x_len * Math.cos(angleP);
+            p_y0 = cube_y_origin + intercept_x_len * Math.sin(angleP);
+
+            p_x1 = cube_x_origin + intercept_y_len;
+            p_y1 = cube_y_origin;
+
+            p_x2 = cube_x_origin;
+            p_y2 = cube_y_origin - intercept_z_len;
+            
+            transposeIfNeeded(h, k, l);
+            drawTriangle(p_x0, p_y0, p_x1, p_y1, p_x2, p_y2);
+
+        } else if (h === 0 && k !== 0 && l !== 0) { // Plane parallel to X-axis (intersects Y, Z)
+            // Points on YZ plane, forming a line, then extended
+            // Point on Y: (cube_x_origin + intercept_y_len, cube_y_origin)
+            // Point on Z: (cube_x_origin, cube_y_origin - intercept_z_len)
+            // This forms a quadrilateral parallel to X
+            p_x0 = cube_x_origin + intercept_y_len; 
+            p_y0 = cube_y_origin;
+            p_x1 = cube_x_origin;                       
+            p_y1 = cube_y_origin - intercept_z_len;
+
+            // Extend parallel to X axis (represented by -aSide*cos(angleP), +aSide*sin(angleP) vector)
+            p_x2 = p_x1 - aSide * Math.cos(angleP); 
+            p_y2 = p_y1 + aSide * Math.sin(angleP);
+            p_x3 = p_x0 - aSide * Math.cos(angleP); 
+            p_y3 = p_y0 + aSide * Math.sin(angleP);
+            
+            transposeIfNeeded(h, k, l); // k, l could be negative
+            drawQuadrilateral(p_x0, p_y0, p_x1, p_y1, p_x2, p_y2, p_x3, p_y3);
+
+        } else if (k === 0 && h !== 0 && l !== 0) { // Plane parallel to Y-axis (intersects X, Z)
+            // Point on X, Point on Z
+            p_x0 = cube_x_origin - intercept_x_len * Math.cos(angleP);
+            p_y0 = cube_y_origin + intercept_x_len * Math.sin(angleP);
+            p_x1 = cube_x_origin;
+            p_y1 = cube_y_origin - intercept_z_len;
+
+            // Extend parallel to Y axis (represented by +a vector along SVG X)
+            p_x2 = p_x1 + a; 
+            p_y2 = p_y1;
+            p_x3 = p_x0 + a; 
+            p_y3 = p_y0;
+
+            transposeIfNeeded(h, k, l); // h, l could be negative
+            drawQuadrilateral(p_x0, p_y0, p_x1, p_y1, p_x2, p_y2, p_x3, p_y3);
+
+        } else if (l === 0 && h !== 0 && k !== 0) { // Plane parallel to Z-axis (intersects X, Y)
+            // Point on X, Point on Y
+            p_x0 = cube_x_origin - intercept_x_len * Math.cos(angleP);
+            p_y0 = cube_y_origin + intercept_x_len * Math.sin(angleP);
+            p_x1 = cube_x_origin + intercept_y_len;
+            p_y1 = cube_y_origin;
+
+            // Extend parallel to Z axis (represented by -a vector along SVG Y)
+            p_x2 = p_x1; 
+            p_y2 = p_y1 - a;
+            p_x3 = p_x0; 
+            p_y3 = p_y0 - a;
+            
+            transposeIfNeeded(h, k, l); // h, k could be negative
+            drawQuadrilateral(p_x0, p_y0, p_x1, p_y1, p_x2, p_y2, p_x3, p_y3);
+        
+        } else if (h === 0 && k === 0 && l !== 0) { // Plane parallel to XY plane (intersects Z only) e.g. (001)
+            // This is a plane at a constant Z
+            p_x0 = cube_x_origin;                                  // Back bottom corner of this plane
+            p_y0 = cube_y_origin - intercept_z_len;
+            p_x1 = cube_x_origin + a;                              // Extends along Y
+            p_y1 = cube_y_origin - intercept_z_len;
+            p_x2 = cube_x_origin + a - aSide * Math.cos(angleP);   // Extends along Y then X
+            p_y2 = cube_y_origin - intercept_z_len + aSide * Math.sin(angleP);
+            p_x3 = cube_x_origin - aSide * Math.cos(angleP);       // Extends along X
+            p_y3 = cube_y_origin - intercept_z_len + aSide * Math.sin(angleP);
+
+            transposeIfNeeded(h, k, l); // l could be negative
+            drawQuadrilateral(p_x0, p_y0, p_x1, p_y1, p_x2, p_y2, p_x3, p_y3);
+
+        } else if (h === 0 && l === 0 && k !== 0) { // Plane parallel to XZ plane (intersects Y only) e.g. (010)
+            // This is a plane at a constant Y
+            p_x0 = cube_x_origin + intercept_y_len;
+            p_y0 = cube_y_origin;                                 // Front bottom corner of this plane
+            p_x1 = cube_x_origin + intercept_y_len;
+            p_y1 = cube_y_origin - a;                             // Extends along Z
+            p_x2 = cube_x_origin + intercept_y_len - aSide * Math.cos(angleP);
+            p_y2 = cube_y_origin - a + aSide * Math.sin(angleP);  // Extends along Z then X
+            p_x3 = cube_x_origin + intercept_y_len - aSide * Math.cos(angleP);
+            p_y3 = cube_y_origin + aSide * Math.sin(angleP);      // Extends along X
+
+            transposeIfNeeded(h, k, l); // k could be negative
+            drawQuadrilateral(p_x0, p_y0, p_x1, p_y1, p_x2, p_y2, p_x3, p_y3);
+
+        } else if (k === 0 && l === 0 && h !== 0) { // Plane parallel to YZ plane (intersects X only) e.g. (100)
+            // This is a plane at a constant X
+            p_x0 = cube_x_origin - intercept_x_len * Math.cos(angleP);
+            p_y0 = cube_y_origin + intercept_x_len * Math.sin(angleP); // Top back corner of this plane
+            p_x1 = cube_x_origin - intercept_x_len * Math.cos(angleP) + a;
+            p_y1 = cube_y_origin + intercept_x_len * Math.sin(angleP); // Extends along Y
+            p_x2 = cube_x_origin - intercept_x_len * Math.cos(angleP) + a;
+            p_y2 = cube_y_origin + intercept_x_len * Math.sin(angleP) - a; // Extends along Y then Z
+            p_x3 = cube_x_origin - intercept_x_len * Math.cos(angleP);
+            p_y3 = cube_y_origin + intercept_x_len * Math.sin(angleP) - a; // Extends along Z
+
+            transposeIfNeeded(h, k, l); // h could be negative
+            drawQuadrilateral(p_x0, p_y0, p_x1, p_y1, p_x2, p_y2, p_x3, p_y3);
+        } else {
+            warnTxt.innerHTML = "This combination of indices is not yet fully handled for drawing.";
+        }
+    }
+
+
+    // --- Event Listener and Initial Call ---
+    function handleViewAction() {
+        const t = indexTxt.value.trim();
+        let h_val, k_val, l_val;
+
+        // Clear previous display styles
+        displayHTxt.classList.remove('overline');
+        displayKTxt.classList.remove('overline');
+        displayLTxt.classList.remove('overline');
+        warnTxt.innerHTML = "";
+
+
+        if (!t.includes(';')) {
+            warnTxt.innerHTML = "Please separate values with a semi-colon (;).";
+            displayHTxt.innerHTML = ""; displayKTxt.innerHTML = ""; displayLTxt.innerHTML = "";
+            millerPlaneShape.setAttribute("points", ""); // Clear plane
+            return;
+        }
+
+        const t_array = t.split(';');
+        if (t_array.length !== 3) {
+            warnTxt.innerHTML = "Please enter three indices (h;k;l).";
+            displayHTxt.innerHTML = ""; displayKTxt.innerHTML = ""; displayLTxt.innerHTML = "";
+            millerPlaneShape.setAttribute("points", ""); // Clear plane
+            return;
+        }
+
+        h_val = parseInt(t_array[0]);
+        k_val = parseInt(t_array[1]);
+        l_val = parseInt(t_array[2]);
+
+        if (isNaN(h_val) || isNaN(k_val) || isNaN(l_val)) {
+            warnTxt.innerHTML = "Indices must be integer numbers.";
+            displayHTxt.innerHTML = ""; displayKTxt.innerHTML = ""; displayLTxt.innerHTML = "";
+            millerPlaneShape.setAttribute("points", ""); // Clear plane
+            return;
+        }
+        
+        displayHTxt.innerHTML = Math.abs(h_val);
+        displayKTxt.innerHTML = Math.abs(k_val);
+        displayLTxt.innerHTML = Math.abs(l_val);
+
+        if (h_val < 0) displayHTxt.classList.add('overline');
+        if (k_val < 0) displayKTxt.classList.add('overline');
+        if (l_val < 0) displayLTxt.classList.add('overline');
+        
+        drawPlane(h_val, k_val, l_val);
+    }
+
+    viewBtn.addEventListener('click', handleViewAction);
+    indexTxt.addEventListener('keypress', function(event) {
+        if (event.key === 'Enter') {
+            handleViewAction();
+        }
+    });
+    
+    // Initial draw for default values
+    window.onload = () => {
+        handleViewAction(); // Draw for "1;1;1"
+    };
+
+    // --- End of Miller Indices Visualization Script ---
+</script>
+
+</body>
+</html>

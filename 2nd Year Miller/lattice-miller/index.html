@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lattice Plane Visualizer - GeoRealm</title>
+    <!-- Shared CSS -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../base.css">
+    <link rel="stylesheet" href="../../layout.css">
+    <link rel="stylesheet" href="../../components.css">
+    <link rel="stylesheet" href="../../shared-theme.css">
+    <!-- Page-specific CSS (original tool styles) -->
+    <link rel="stylesheet" href="style.css">
+    <!-- Three.js for background -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Tailwind (if still used by original HTML structure bits) -->
+    <script src="https://cdn.tailwindcss.com"></script> 
+    <style>
+        /* Body styles to ensure background canvas works and content is centered */
+        body {
+            font-family: var(--font-primary, 'Inter', sans-serif);
+            color: var(--text-primary, #e2e8f0);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            position: relative;
+        }
+        #spaceBackgroundCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        /* Main content wrapper style - similar to video.css */
+        .lattice-visualizer-page-content {
+            background-color: rgba(var(--bg-secondary-rgb, 28, 28, 43), 0.85); /* Using a var or fallback */
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            padding: 2rem;
+            border-radius: 12px;
+            border: 1px solid rgba(var(--accent-primary-rgb, 255, 215, 0), 0.3);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+            width: 100%;
+            max-width: 700px; /* Adjusted max-width for this tool page */
+            margin: 2rem auto; /* Centering */
+            color: var(--text-primary);
+        }
+        /* Overrides for #container within the new theme */
+        #container {
+            width: 100%; /* Take full width of its new parent */
+            max-width: none; /* Remove previous max-width */
+            margin: 0; /* Remove previous margin */
+            padding: 1rem; /* Adjust padding as needed */
+            background-color: transparent; /* Make original #container transparent */
+            backdrop-filter: none;
+            border-radius: 0;
+            box-shadow: none;
+            color: var(--text-primary);
+        }
+        #container .header-title {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--accent-primary);
+            font-size: 1.8rem; /* Match other H1s */
+            margin-bottom: 0.5rem;
+        }
+        #container .header-subtitle {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+        #kanvas {
+            border: 1px solid rgba(var(--accent-secondary-rgb, 144, 205, 244), 0.5); /* Lighter border */
+            background-color: rgba(var(--bg-primary-rgb, 10, 10, 20), 0.6); /* Darker, semi-transparent */
+            border-radius: 6px;
+        }
+        .input-area p {
+            color: var(--text-secondary); 
+            font-size: 0.9rem;
+        }
+        .input-area input[type="text"] {
+            background-color: rgba(var(--bg-tertiary-rgb, 40, 40, 55), 0.8);
+            border: 1px solid rgba(var(--accent-primary-rgb, 255, 215, 0), 0.4);
+            color: var(--text-input, #EAEAEA);
+            border-radius: 4px;
+            padding: 6px;
+        }
+        .input-area input[type="button"] {
+            background-color: var(--accent-primary, #4299e1);
+            color: var(--button-text-color, #FFFFFF);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            font-weight: 600;
+            transition: background-color 0.2s ease;
+        }
+        .input-area input[type="button"]:hover {
+            background-color: var(--accent-primary-dark, #3182ce);
+        }
+        #warn_txt {
+            color: var(--text-error, #f56565); 
+            background-color: rgba(var(--bg-error-rgb, 200, 0, 0), 0.2);
+            padding: 0.5rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+        #origin_display_txt, #origin_dot_explanation {
+            color: var(--text-muted, #a0aec0);
+            font-size: 0.8rem;
+        }
+        #origin_dot_explanation strong {
+             color: var(--accent-warning, #FFD700); /* Gold for the dot explanation too */
+        }
+        #para {
+            background-color: rgba(var(--bg-primary-rgb, 10, 10, 20), 0.7);
+            color: var(--text-muted, #a0aec0);
+            border: 1px solid rgba(var(--accent-primary-rgb, 255, 215, 0), 0.2);
+            font-size: 0.75rem;
+            padding: 0.5rem;
+            border-radius: 4px;
+        }
+        #para a {
+            color: var(--accent-secondary, #90cdf4);
+        }
+        /* SVG elements styling for better visibility on dark background */
+        #svgContainer svg text {
+            fill: var(--text-secondary, #cbd5e0);
+        }
+        #svgContainer svg line,
+        #svgContainer svg rect {
+            /* Default stroke for cube lines - can be overridden by specific IDs */
+            stroke: rgba(var(--text-muted-rgb, 160, 174, 192), 0.7);
+        }
+        #svgContainer svg #axisX,
+        #svgContainer svg #axisY,
+        #svgContainer svg #axisZ {
+            stroke: var(--color-axis, #48bb78); /* Green for axes */
+        }
+        #svgContainer svg #axisX path, /* Arrowheads */
+        #svgContainer svg #axisY path,
+        #svgContainer svg #axisZ path {
+            fill: var(--color-axis, #48bb78);
+        }
+         #svgContainer svg [id^="cube_edge_front_left_bottom_to_origin_plane_x"],
+         #svgContainer svg [id^="cube_edge_front_right_bottom_to_origin_plane_y"],
+         #svgContainer svg [id^="cube_edge_back_left_top"],
+         #svgContainer svg [id^="cube_edge_back_right_top"] {
+            stroke: var(--color-cube-accent-lines, #63b3ed); /* Blueish lines for specific cube edges */
+        }
+        #miller_plane_shape {
+            fill: rgba(226, 232, 240, 0.25); /* Whitish-gray fill, semi-transparent */
+            stroke: rgba(226, 232, 240, 0.8); /* Solid whitish-gray stroke */
+        }
+        #origin_marker_dot {
+            fill: var(--accent-warning, #FFD700);
+            stroke: var(--bg-primary, #0A0A14); /* Dark stroke for better visibility on light plane */
+        }
+        /* Tutorial section styling (copied from miller-choice and adapted) */
+        .tool-tutorial-section {
+            background-color: rgba(var(--bg-secondary-rgb, 28, 28, 43), 0.85); 
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            padding: 2rem;
+            border-radius: 12px;
+            border: 1px solid rgba(var(--accent-primary-rgb, 255, 215, 0), 0.3);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+            width: 100%;
+            max-width: 700px; 
+            margin: 2rem auto; 
+            color: var(--text-primary);
+        }
+        .tool-tutorial-section h2{
+            font-family: 'Orbitron', sans-serif;
+            color: var(--accent-primary);
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+        }
+        .tool-tutorial-section h3{
+            font-size: 1.3em; 
+            color: var(--accent-secondary, #90cdf4); 
+            margin-top: 1.25rem; 
+            margin-bottom: 0.75rem;
+        }
+        .tool-tutorial-section ul {
+            list-style-type: disc; 
+            margin-left: 20px; 
+            margin-bottom: 1rem;
+        }
+         .tool-tutorial-section ul ul {
+            list-style-type: circle; 
+            margin-top: 0.5rem;
+        }
+        .tool-tutorial-section p, .tool-tutorial-section li {
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        .tool-tutorial-section code {
+            background-color: rgba(var(--bg-tertiary-rgb, 40,40,55), 0.8);
+            padding: 2px 5px; 
+            border-radius: 3px;
+            font-family: var(--font-monospace, monospace);
+        }
+    </style>
+</head>
+<body>
+    <canvas id="spaceBackgroundCanvas"></canvas>
+
+    <header id="mainHeader">
+        <div class="header-content container mx-auto">
+            <a href="../../index.html" class="logo-title">GeoRealm</a>
+            <nav id="mainNav">
+                <a href="../../index.html#tools" class="nav-link">All Tools</a>
+                <a href="../miller-choice.html" class="nav-link">Back to Miller Choice</a>
+                <a href="../../index.html" class="nav-link">Home</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="page-main-content">
+        <div class="content-wrapper lattice-visualizer-page-content">
+            <!-- The original #container div now acts as an inner wrapper for the tool itself -->
+            <div id="container" class="font-arial">
+                <h1 class="header-title">Draw your own lattice planes</h1>
+                <p class="header-subtitle">
+                    This simulation generates images of lattice planes. To see a plane, enter a set of Miller indices
+                    (each index between -6 and 6), the numbers separated by a semi-colon, then click "View" or press Enter.
+                </p>
+                <div id="kanvas">
+                    <div class="leftText">
+                        <div class="input-area">
+                            <p>Enter Miller indices (index max 6), e.g.
+                                <input type="text" size="7" id="index_txt" value="1;1;1">
+                                <input type="button" id="view_btn" value="View">
+                                (<span id="displayH_txt" class="miller-display"></span><span id="displayK_txt" class="miller-display"></span><span id="displayL_txt" class="miller-display"></span>)
+                            </p>
+                        </div>
+                        <div id="svgContainer">
+                            <svg width="470" height="180" id="svg1" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <marker id="arrow" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto" markerUnits="strokeWidth">
+                                        <path d="M0,0 L0,6 L4,3 z"/> <!-- Fill will be handled by CSS var -->
+                                    </marker>
+                                </defs>
+                                <line x1="221" y1="130" x2="116" y2="175" stroke-width="2" id="axisX" marker-end="url(#arrow)"></line>
+                                <line x1="221" y1="130" x2="221" y2="7" stroke-width="2" id="axisZ" marker-end="url(#arrow)"></line>
+                                <line x1="221" y1="130" x2="350" y2="130" stroke-width="2" id="axisY" marker-end="url(#arrow)"></line>
+                                <text x="100" y="180" style="font-size:13px; font-weight:bold;">X</text>
+                                <text x="360" y="135" style="font-size:13px; font-weight:bold;">Y</text>
+                                <text x="205" y="15" style="font-size:13px; font-weight:bold;">Z</text>
+                                <line x1="150" y1="60" x2="221" y2="30" stroke-dasharray="2,2" id="cube_edge_back_left_top"></line>
+                                <line x1="221" y1="30" x2="321" y2="30" stroke-dasharray="2,2" id="cube_edge_back_top_horizontal"></line>
+                                <line x1="250" y1="60" x2="321" y2="30" stroke-dasharray="2,2" id="cube_edge_back_right_top"></line>
+                                <line x1="150" y1="160" x2="221" y2="130" id="cube_edge_front_left_bottom_to_origin_plane_x"></line>
+                                <line x1="250" y1="160" x2="321" y2="130" id="cube_edge_front_right_bottom_to_origin_plane_y"></line>
+                                <rect x="150" y="60" width="100" height="100" style="fill:none; stroke-width:1;" id="cube_front_face"></rect>
+                                <line x1="150" y1="60" x2="250" y2="60" id="cube_edge_front_top_horizontal"></line>
+                                <line x1="250" y1="60" x2="250" y2="160" id="cube_edge_front_right_vertical"></line>
+                                <line x1="150" y1="160" x2="250" y2="160" id="cube_edge_front_bottom_horizontal"></line>
+                                <line x1="221" y1="30" x2="221" y2="130" stroke-dasharray="2,2" id="cube_edge_back_vertical_at_origin_z"></line>
+                                <line x1="321" y1="30" x2="321" y2="130" stroke-dasharray="2,2" id="cube_edge_back_right_vertical"></line>
+                                <line x1="221" y1="130" x2="321" y2="130" stroke-dasharray="2,2" id="cube_edge_back_bottom_horizontal_at_origin_y"></line>
+                                <polyline id="miller_plane_shape" stroke-width="1.5" points=""></polyline>
+                                <circle id="origin_marker_dot" cx="0" cy="0" r="4" stroke-width="1.5" style="visibility: hidden;" />
+                            </svg>
+                        </div>
+                        <p id="warn_txt"></p>
+                        <p id="origin_display_txt"></p>
+                        <p id="origin_dot_explanation" style="color: var(--text-muted, #a0aec0); font-size:0.8rem; margin-top: 2px;">The <strong style="color: var(--accent-warning, #FFD700);">gold dot (•)</strong> on the diagram indicates this plotting origin.</p>
+                    </div>
+                    <div id="para">
+                        Re-use of this resource is governed by a Creative Commons Attribution-<br />
+                        NonCommercial-ShareAlike 4.0 International<br />
+                        <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">https://creativecommons.org/licenses/by-nc-sa/4.0/</a>
+                    </div>
+                    <!-- Original #cc div (logos) is removed / commented out -->
+                </div> 
+            </div>
+            <!-- Tutorial Section -->
+            <section id="tutorialSection" class="tool-tutorial-section">
+                <h2>How to Use the Lattice Plane Visualizer</h2>
+                <div>
+                    <p>This tool helps you visualize crystallographic planes within a unit cell using Miller Indices (hkl).</p>
+                    <h3>1. Entering Miller Indices:</h3>
+                    <ul>
+                        <li>Enter three integer values for h, k, and l, separated by semicolons (e.g., <code>1;1;1</code> or <code>-1;0;2</code>).</li>
+                        <li>Each index can range from -6 to 6.</li>
+                        <li>After entering the indices, click the "View" button or press Enter.</li>
+                    </ul>
+                    <h3>2. Understanding the Visualization:</h3>
+                    <ul>
+                        <li><strong>The Unit Cell:</strong> The cube represents a standard unit cell.</li>
+                        <li><strong>Axes:</strong> The lines (default green) show the X, Y, and Z crystallographic axes.</li>
+                        <li><strong>The Lattice Plane:</strong> The colored polygon (now whitish-gray) shows the (hkl) plane.</li>
+                        <li><strong>Plotting Origin (Gold Dot •):</strong> The <strong style="color: var(--accent-warning, #FFD700);">gold dot (•)</strong> on the diagram indicates the conceptual origin from which the plane's intercepts are plotted onto the displayed unit cell. 
+                            Its coordinates (e.g., (0,0,0) or (1,0,0)) are shown below the input field. This origin shifts based on negative Miller indices: 
+                            <ul>
+                                <li>If 'h' is negative, the plotting origin shifts to (1,0,0) of the displayed cell.</li>
+                                <li>If 'k' is negative, the plotting origin shifts to (0,1,0) of the displayed cell.</li>
+                                <li>If 'l' is negative, the plotting origin shifts to (0,0,1) of the displayed cell.</li>
+                                <li>(These shifts are cumulative if multiple indices are negative).</li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <h3>3. Special Cases:</h3>
+                    <ul>
+                        <li><strong>Zero Index:</strong> If an index is 0 (e.g., <code>1;0;1</code>), the plane is parallel to the axis corresponding to that zero index.</li>
+                        <li><strong>(000) Plane:</strong> This plane is undefined and cannot be drawn.</li>
+                    </ul>
+                    <p>Experiment with different Miller indices to understand their relationship with the orientation of lattice planes!</p>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer id="siteFooter">
+        <div class="footer-content container mx-auto">
+            <p>&copy; 2024 GeoRealm by NORSU Innovators. All rights reserved.</p>
+            <p>Lattice Plane Visualizer</p>
+        </div>
+    </footer>
+
+    <script src="../../background-scene.js"></script> <!-- Adjusted path -->
+    <script src="script.js" defer></script>
+</body>
+</html> 

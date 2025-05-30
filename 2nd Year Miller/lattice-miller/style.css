@@ -1,0 +1,94 @@
+/* style.css for Lattice Plane Visualizer - Base tool styles */
+
+/* #container is now an inner wrapper, its theming is handled by inline styles in HTML */
+/* #kanvas specific base styles, theming mostly in HTML */
+#kanvas {
+    width: 100%; /* Takes width from parent .lattice-visualizer-page-content */
+    /* min-height and max-height can be set if fixed size is desired, or let content define it */
+    /* background-color, border will be themed in HTML */
+    border-radius: 6px; 
+    overflow: hidden; 
+    margin: 0 auto; /* Center if its width is constrained by parent */
+    position: relative; /* For absolute positioning of children like #para */
+}
+
+/* #cc is removed/commented in HTML, so styles can be removed */
+
+/* #para base positioning and font. Theming (color, background) in HTML */
+#para {
+    position: absolute;
+    bottom: 10px; 
+    left: 10px;
+    padding: 5px;
+    font-weight: bold;
+    font-size: 10px; 
+    /* color, border, background-color are themed in HTML */
+    visibility: hidden; /* Original script controls this */
+    border-radius: 4px;
+    z-index: 10; 
+}
+
+/* .leftText is a structural element, padding can remain */
+.leftText {
+    padding: 10px;
+    width: 100%; 
+    text-align: justify;
+    font-size: 15px; /* Base font size, can be overridden by theme if needed */
+}
+
+/* .input-area base structure. Theming in HTML */
+.input-area p {
+    /* color themed in HTML */
+    margin-bottom: 10px;
+}
+
+.input-area input[type="text"] {
+    /* border, padding, color, background themed in HTML */
+    border-radius: 4px; /* Keep base radius if desired */
+    width: 80px; 
+}
+
+.input-area input[type="button"] {
+    /* color, background, border, padding themed in HTML */
+    border-radius: 4px; /* Keep base radius */
+    cursor: pointer;
+    font-weight: bold;
+}
+
+/* #warn_txt base styling. Theming in HTML */
+#warn_txt {
+    /* color, background themed in HTML */
+    font-size: 13px;
+    min-height: 20px; 
+    margin-top: 5px;
+    padding: 5px; /* Add some padding for themed background */
+}
+
+/* .miller-display base styling. Theming in HTML */
+.miller-display span {
+    font-weight: bold;
+    letter-spacing: 1px;
+    /* color themed in HTML */
+}
+
+.overline {
+    text-decoration: overline;
+}
+
+/* #svgContainer base layout */
+#svgContainer {
+    width: 100%; 
+    height: 180px; 
+    display: flex;
+    justify-content: center; 
+    align-items: center;
+    margin-bottom: 10px; /* Add some space below SVG */
+}
+
+/* .font-arial can remain if used for specific text portions */
+.font-arial { font-family: Arial, Helvetica, sans-serif; }
+
+/* Header-title and header-subtitle styling is now primarily handled by the theme in HTML */
+/* Removing old .header-title and .header-subtitle styles from here */
+
+/* Body styles are removed as they are handled by shared-theme.css and inline HTML styles */ 
