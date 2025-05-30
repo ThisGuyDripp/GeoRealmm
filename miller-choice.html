@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choose Miller Indices Tool - GeoRealm</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+    <!-- Shared CSS -->
+    <link rel="stylesheet" href="base.css">
+    <link rel="stylesheet" href="layout.css">
+    <link rel="stylesheet" href="components.css">
+    <link rel="stylesheet" href="shared-theme.css">
+    <!-- Three.js for background -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        /* Body styles to ensure background canvas works and content is centered */
+        body {
+            font-family: var(--font-primary, 'Inter', sans-serif);
+            color: var(--text-primary, #e2e8f0);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            position: relative;
+        }
+        #spaceBackgroundCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        /* Main content wrapper style - similar to video.css */
+        .miller-choice-page-content {
+            background-color: rgba(var(--bg-secondary-rgb, 28, 28, 43), 0.85); /* Using a var or fallback */
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            padding: 2rem;
+            border-radius: 12px;
+            border: 1px solid rgba(var(--accent-primary-rgb, 255, 215, 0), 0.3);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+            width: 100%;
+            max-width: 800px; /* Max width for choice page */
+            margin: 2rem auto; /* Centering within .page-main-content */
+            color: var(--text-primary);
+        }
+        .miller-choice-page-content h1 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--accent-primary);
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+        }
+        /* Styling for the tool option cards */
+        .tool-option-card {
+            background-color: rgba(var(--bg-primary-rgb, 10, 10, 20), 0.75);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid rgba(var(--accent-primary-rgb, 255, 215, 0), 0.2);
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .tool-option-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 15px rgba(var(--accent-primary-rgb, 255, 215, 0), 0.2);
+        }
+        .tool-option-card h3 {
+            font-size: 1.5em;
+            font-family: 'Orbitron', sans-serif;
+            color: var(--accent-secondary, #90cdf4);
+            margin-top: 0;
+            margin-bottom: 0.75rem;
+        }
+        .tool-option-card p {
+            font-size: 0.95em;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            color: var(--text-secondary, #cbd5e0);
+        }
+        .tool-option-card .btn-select {
+            display: inline-block;
+            background-color: var(--accent-primary, #4299e1);
+            color: var(--button-text-color, #FFFFFF);
+            padding: 0.6rem 1.2rem;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+        .tool-option-card .btn-select:hover {
+            background-color: var(--accent-primary-dark, #3182ce);
+            transform: scale(1.03);
+        }
+        /* Ensure header and footer from shared-theme/layout are styled appropriately */
+        /* mainHeader and siteFooter styles should come from layout.css or shared-theme.css */
+    </style>
+</head>
+<body>
+    <canvas id="spaceBackgroundCanvas"></canvas>
+
+    <header id="mainHeader">
+        <div class="header-content container mx-auto"> <!-- Using .container and .mx-auto like index.html for consistency -->
+            <a href="index.html" class="logo-title">GeoRealm</a>
+            <nav id="mainNav">
+                <a href="index.html#tools" class="nav-link">All Tools</a>
+                <a href="index.html" class="nav-link">Home</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="page-main-content"> <!-- Added page-main-content class -->
+        <div class="content-wrapper miller-choice-page-content"> <!-- New main content wrapper -->
+            <h1>Select Miller Indices Tool</h1>
+
+            <div class="tool-option-card">
+                <h3>Weiss Parameter Method</h3>
+                <p>This tool helps understand crystal structures by defining crystal faces based on their intercepts with crystallographic axes. It uses Weiss Parameters (relative axial intercepts) and then converts them to Miller Indices (hkl or hkil) for a standardized notation. It also explains how axial ratios, the relative lengths of these axes, are determined.</p>
+                <a href="2nd Year Miller/miller indices/index.html" class="btn-select">Open Weiss Parameter Tool</a>
+            </div>
+
+            <div class="tool-option-card">
+                <h3>Lattice Plane Visualizer</h3>
+                <p>This tool visually constructs crystallographic planes within a unit cell based on their Miller Indices (e.g., (hkl)). It involves selecting an appropriate origin (shifting if indices are negative), taking reciprocals of the indices (a zero index means the plane is parallel to that axis), and then plotting these points to draw the plane. For more details, see: <a href="https://youtu.be/NhJUy4jaSE8?si=q1HY6QoBjCNUcnMs" target="_blank" style="color: var(--link-color, #90cdf4); text-decoration: underline;">YouTube Guide</a></p>
+                <a href="2nd Year Miller/lattice-miller/index.html" class="btn-select">Open Lattice Plane Visualizer</a>
+            </div>
+        </div>
+    </main>
+
+    <footer id="siteFooter">
+        <div class="footer-content container mx-auto"> <!-- Using .container and .mx-auto -->
+            <p>&copy; 2024 GeoRealm by NORSU Innovators. All rights reserved.</p>
+            <p>Miller Indices Tool Selector</p>
+        </div>
+    </footer>
+
+    <script src="background-scene.js"></script> <!-- Changed from three-scene.js to background-scene.js -->
+</body>
+</html> 
