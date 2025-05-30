@@ -1,0 +1,278 @@
+/* --- FONT IMPORT --- */
+/* IMPORTANT: @import must be at the very top */
+/* Switched to Orbitron for headings and Exo 2 for sub-heading/buttons */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Exo+2:wght@300;400;600&display=swap');
+
+/* --- BASE & RESET --- */
+/* NOTE: Font import was moved from here to the top */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    /* Base font changed for UI consistency, affects buttons unless overridden */
+    font-family: 'Exo 2', sans-serif;
+    color: #ffffff;
+    background-color: #000000; /* Fallback background */
+    overflow: hidden; /* Prevent scrollbars */
+}
+
+/* --- BACKGROUND VIDEO (UNCHANGED from your provided CSS) --- */
+.video-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+#bg-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.4; /* Your value */
+
+    filter: blur(5px) brightness(100%); /* Adjust the '3px' value as needed */
+}
+
+/* --- LAYOUT CONTAINER (UNCHANGED from your provided CSS) --- */
+.container {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: 100vh;
+    padding: 40px;
+}
+
+/* --- KEYFRAME ANIMATIONS (For Text Only) --- */
+@keyframes textFadeInDown {
+    from { opacity: 0; transform: translateY(-20px) skewY(5deg); }
+    to { opacity: 1; transform: translateY(0) skewY(0deg); }
+}
+
+@keyframes textFadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- TEXT STYLES (Enhanced - The focus of the changes) --- */
+
+/* Header Text Positioning (UNCHANGED) */
+.header-text {
+    position: absolute;
+    top: 40px;
+    left: 40px;
+    z-index: 2;
+    /* Removed conflicting text styles from here */
+}
+
+/* Header Text H1 Styling (NEW DESIGN) */
+.header-text h1 {
+    font-family: 'Orbitron', sans-serif; /* New font */
+    font-size: 3em; /* Slightly larger */
+    font-weight: 700; /* Bold */
+    color: #f0f0f0; /* Slightly off-white */
+    letter-spacing: 0.5px;
+    /* Multi-layer shadow: Subtle depth + Dark offset + Accent glow */
+    text-shadow:
+        /* Inner bevel simulation - top left light */
+        -1px -1px 1px rgba(255, 255, 255, 0.1),
+        /* Inner bevel simulation - bottom right dark */
+        1px 1px 1px rgba(0, 0, 0, 0.4),
+        /* Main drop shadow */
+        3px 4px 7px rgba(0, 0, 0, 0.6),
+        /* Subtle accent glow - Cyan */
+        0 0 25px rgba(0, 200, 255, 5.0);
+    opacity: 0; /* Start hidden for animation */
+    animation: textFadeInDown 1s 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+/* Main Content Positioning (UNCHANGED) */
+.main-content {
+    position: absolute;
+    top: 55%;
+    left: 8%;
+    transform: translateY(-50%);
+    max-width: 60%;
+    z-index: 2;
+}
+
+/* Main Heading Styling (NEW DESIGN) */
+.main-heading {
+    font-family: 'Orbitron', sans-serif; /* New font */
+    font-size: 6.5em; /* Larger size */
+    font-weight: 900; /* Black */
+    margin-bottom: 15px;
+    line-height: 1.1;
+    color: #ffffff; /* Bright white */
+    letter-spacing: 1px;
+    /* Removed gradient styles */
+    /* Multi-layer shadow: Subtle depth + Dark offset + Accent glow */
+    text-shadow:
+        /* Inner bevel simulation - top left light */
+        -1px -1px 1px rgba(255, 255, 255, 0.15),
+        /* Inner bevel simulation - bottom right dark */
+        1px 1px 1px rgba(0, 0, 0, 0.5),
+        /* Main drop shadow */
+        4px 5px 9px rgba(0, 0, 0, 0.7),
+        /* Accent glow - Cyan */
+        0 0 30px rgba(0, 200, 255, 9.99);
+    opacity: 0; /* Start hidden for animation */
+    animation: textFadeInDown 1s 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+/* Sub-heading Styling (NEW DESIGN) */
+.sub-heading {
+    font-family: 'Exo 2', sans-serif; /* New font */
+    font-size: 1.15em; /* Slightly adjusted */
+    font-weight: 600; /* Light weight */
+    text-transform: uppercase;
+    letter-spacing: 4px; /* Wider spacing */
+    color: rgba(255, 255, 255, 0.75); /* More muted color */
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5); /* Very subtle shadow for readability */
+    margin-top: 15px; /* Add slight space */
+    opacity: 0; /* Start hidden for animation */
+    animation: textFadeInUp 1s 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+    text-shadow:
+        /* Inner bevel simulation - top left light */
+        -1px -1px 1px rgba(255, 255, 255, 0.15),
+        /* Inner bevel simulation - bottom right dark */
+        1px 1px 1px rgba(0, 0, 0, 0.5),
+        /* Main drop shadow */
+        4px 5px 9px rgba(0, 0, 0, 0.7),
+        /* Accent glow - Cyan */
+        0 0 6px rgba(255, 255, 255, 0.75);
+    opacity: 0; /* Start hidden for animation */
+    
+    /* --- Added Styles --- */
+    display: inline-block; /* Make border wrap the content */
+    border: 1px solid rgba(255, 255, 255, 0.5); /* Add the border */
+    padding: 8px 15px; /* Add padding inside the border */
+    border-radius: 4px; /* Optional: Slightly rounded corners */
+    background-color: rgba(0, 0, 0, 0.15); /* Optional: Subtle dark background inside border */
+}
+
+
+/* --- TOP RIGHT ELEMENTS (UNCHANGED from your provided CSS) --- */
+.top-right-elements {
+    position: absolute;
+    top: 40px;
+    right: 40px;
+    width: 280px;
+    height: 280px;
+    z-index: 2;
+}
+.earth-video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    clip-path: circle(38% at 50% 50%); /* Your value */
+}
+.coming-soon-gif {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 110%;
+    height: 110%;
+    max-width: none;
+    opacity: 0.41; /* Your value */
+}
+
+/* --- BUTTON STYLES (UNCHANGED from your provided CSS, except base font family) --- */
+.button-container {
+    position: absolute;
+    bottom: 40px;
+    right: 40px;
+    display: flex;
+    gap: 15px;
+    z-index: 2;
+}
+.btn {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    background-color: rgba(20, 20, 20, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    border-radius: 6px;
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 0.95em; /* Uses base font 'Exo 2' now */
+    font-weight: 600;
+    /* Make sure transition covers new properties */
+    transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease, color 0.3s ease;
+    backdrop-filter: blur(2px);
+    min-width: 180px;
+    justify-content: space-between;
+    /* Add a subtle base shadow */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+}
+.btn:hover {
+    background-color: rgba(50, 50, 50, 0.8);
+    border-color: #00e1ff; /* Use a bright cyan for hover border */
+    color: #00e1ff; /* Change text color on hover */
+    transform: translateY(-3px) scale(1.02); /* Lift and slight scale */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.4), /* Darker shadow */
+                0 0 10px rgba(0, 225, 255, 0.4); /* Cyan glow */
+    cursor: pointer; /* Ensure pointer cursor on hover */
+}
+.btn:active {
+    background-color: rgba(40, 40, 45, 0.85); /* Slightly darker background */
+    border-color: rgba(0, 225, 255, 0.6); /* Dimmer cyan border */
+    color: rgba(0, 225, 255, 0.8); /* Dimmer cyan text */
+    transform: translateY(0px) scale(0.99); /* Press down effect */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3), /* Smaller shadow */
+                0 0 5px rgba(0, 225, 255, 0.2); /* Dimmer glow */
+    transition-duration: 0.1s; /* Make active transition faster */
+}
+.btn:hover::after {
+    transform: translateX(3px); /* Move arrow slightly */
+    color: #00e1ff; /* Brighten arrow */
+}
+.btn-icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+    flex-shrink: 0;
+}
+.google-play-icon {
+     background-color: white;
+     border-radius: 3px;
+}
+.btn-text {
+   flex-grow: 1;
+   text-align: left;
+   margin-right: 10px;
+}
+.btn::after {
+    content: '\2192';
+    font-size: 1.2em;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+/* --- RESPONSIVENESS (UNCHANGED from your provided CSS) --- */
+@media (max-width: 1200px) {
+    .main-heading { font-size: 5em; } /* Text size change is OK */
+    .header-text h1 { font-size: 2.4em; } /* Text size change is OK */
+    .top-right-elements { width: 240px; height: 240px; }
+}
+@media (max-width: 768px) {
+    .main-heading { font-size: 3.5em; } /* Text size change is OK */
+    .header-text h1 { font-size: 2em; } /* Text size change is OK */
+    .sub-heading { font-size: 0.9em; } /* Text size change is OK */
+    .button-container { flex-direction: column; right: 20px; bottom: 20px; gap: 10px; }
+    .btn { min-width: 160px; padding: 10px 15px; }
+    .top-right-elements { width: 180px; height: 180px; top: 20px; right: 20px; }
+    .main-content { left: 5%; max-width: 80%; }
+}
+
+/* Note: Removed the duplicate/conflicting text style rules from your original CSS */
+/* For example, the rules targeting .header-text directly for text styles were removed */
+/* Also removed the rule block targeting .header-text h1, .main-heading { ... } */

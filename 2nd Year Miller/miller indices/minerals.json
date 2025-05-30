@@ -1,0 +1,12 @@
+[
+  {"name": "Quartz (101)", "indices": [1,0,1]},
+  {"name": "Halite (111)", "indices": [1,1,1]},
+  {"name": "Diamond (110)", "indices": [1,1,0]},
+  {"name": "Graphite (002)", "indices": [0,0,2]},
+  {"name": "Galena (100)", "indices": [1,0,0]},
+  {"name": "Pyrite (210)", "indices": [2,1,0]},
+  {"name": "Fluorite (311)", "indices": [3,1,1]},
+  {"name": "Calcite (104)", "indices": [1,0,4]},
+  {"name": "Bauxite (021)", "indices": [0,2,1]},
+  {"name": "Magnetite (222)", "indices": [2,2,2]}
+]

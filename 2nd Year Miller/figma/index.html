@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart</title>
+    <link href="https://fonts.googleapis.com/css?family=Inter&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <div class="page-container">
+
+        <header class="main-header">
+            <nav class="main-nav">
+                <div class="main-nav__logo">World Peas</div>
+                <ul class="main-nav__links">
+                    <li><a href="#" class="main-nav__link">Shop</a></li>
+                    <li><a href="#" class="main-nav__link">Newstand</a></li>
+                    <li><a href="#" class="main-nav__link">Who we are</a></li>
+                    <li><a href="#" class="main-nav__link">My profile</a></li>
+                </ul>
+                <button type="button" class="main-nav__cart-button">Basket (3)</button>
+            </nav>
+        </header>
+
+        <main class="main-content">
+
+            <section class="page-heading">
+                <h1>Basket</h1>
+                <p class="page-heading__item-count">3 items</p>
+                <hr class="page-heading__divider">
+            </section>
+
+            <div class="cart-layout">
+
+                <section class="product-list__container">
+                    <h2>Items</h2>
+                    <ul class="product-list">
+                        <li class="product-item">
+                            <img src="images/node-10.png" class="product-item__image" alt="Heirloom tomato">
+                            <div class="product-item__details">
+                                <h3 class="product-item__name">Heirloom tomato</h3>
+                                <p class="product-item__price-unit">$5.99 / lb</p>
+                                <div class="product-item__quantity-selector">
+                                    <span class="product-item__quantity-value">1 lb</span>
+                                    <button class="product-item__quantity-button" aria-label="Change quantity for Heirloom tomato">
+                                        <img src="images/union-9.svg" alt="dropdown icon">
+                                    </button>
+                                </div>
+                            </div>
+                            <p class="product-item__price-total">$5.99</p>
+                        </li>
+
+                        <li class="product-item">
+                            <img src="images/node-19.png" class="product-item__image" alt="Organic ginger">
+                            <div class="product-item__details">
+                                <h3 class="product-item__name">Organic ginger</h3>
+                                <p class="product-item__price-unit">$12.99 / lb</p>
+                                <div class="product-item__quantity-selector">
+                                    <span class="product-item__quantity-value">0.5 lb</span>
+                                    <button class="product-item__quantity-button" aria-label="Change quantity for Organic ginger">
+                                        <img src="images/union-17.svg" alt="dropdown icon">
+                                    </button>
+                                </div>
+                            </div>
+                            <p class="product-item__price-total">$6.50</p>
+                        </li>
+
+                        <li class="product-item">
+                            <img src="images/node-28.png" class="product-item__image" alt="Sweet onion">
+                            <div class="product-item__details">
+                                <h3 class="product-item__name">Sweet onion</h3>
+                                <p class="product-item__price-unit">$2.99 / lb</p>
+                                <div class="product-item__quantity-selector">
+                                    <span class="product-item__quantity-value">5 lb</span>
+                                    <button class="product-item__quantity-button" aria-label="Change quantity for Sweet onion">
+                                        <img src="images/union-26.svg" alt="dropdown icon">
+                                    </button>
+                                </div>
+                            </div>
+                            <p class="product-item__price-total">$14.95</p>
+                        </li>
+                    </ul>
+                </section>
+
+                <aside class="order-summary">
+                    <h2>Order summary</h2>
+                    <dl class="order-summary__details">
+                        <div class="order-summary__line">
+                            <dt>Subtotal</dt>
+                            <dd>$27.44</dd>
+                        </div>
+                        <div class="order-summary__line">
+                            <dt>Shipping</dt>
+                            <dd>$3.99</dd>
+                        </div>
+                        <div class="order-summary__line">
+                            <dt>Tax</dt>
+                            <dd>$2.00</dd>
+                        </div>
+                    </dl>
+                    <div class="order-summary__total-line">
+                        <span class="order-summary__total-label">Total</span>
+                        <span class="order-summary__total-value">$33.43</span>
+                    </div>
+                    <button type="button" class="order-summary__cta-button">
+                        Continue to payment
+                        <img src="images/vector-88-42.svg" class="order-summary__cta-icon" alt="">
+                    </button>
+                </aside>
+
+            </div> </main> </div> </body>
+</html>

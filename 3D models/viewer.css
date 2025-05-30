@@ -1,0 +1,111 @@
+/* viewer.css - Page-specific styles for Static 3D Model Viewer */
+
+/* Styles for the main content area of the viewer page */
+.viewer-page-content {
+    background-color: rgba(var(--bg-secondary-rgb, 28, 28, 43), 0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    padding: 2rem;
+    border-radius: 12px;
+    border: 1px solid rgba(var(--accent-primary-rgb, 255, 215, 0), 0.3);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+    width: 100%;
+    max-width: 1100px; /* Max width for the viewer content area */
+    margin: 2rem auto;
+    color: var(--text-primary);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.viewer-page-content h1 {
+    font-family: 'Orbitron', sans-serif;
+    color: var(--accent-primary);
+    text-align: center;
+    margin-bottom: 1.5rem;
+    font-size: 2rem;
+}
+
+#controlsContainer {
+    background-color: rgba(var(--bg-accent-rgb, 42, 42, 63), 0.7);
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    border: 1px solid rgba(var(--accent-primary-rgb, 255, 215, 0), 0.2);
+}
+
+#controlsContainer label {
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+#modelSelect {
+    padding: 0.5rem;
+    border-radius: 4px;
+    border: 1px solid var(--accent-primary);
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    min-width: 250px;
+    font-family: 'Inter', sans-serif;
+}
+
+#loadingIndicator {
+    color: var(--accent-secondary);
+    font-style: italic;
+    margin-left: 1rem;
+}
+
+#viewerContainer {
+    width: 100%;
+    max-width: 1000px; /* Max width for the viewer canvas container */
+    height: 60vh; 
+    min-height: 450px;
+    background-color: rgba(var(--bg-primary-rgb, 10, 10, 20), 0.9);
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    position: relative;
+    overflow: hidden; 
+    border: 1px solid rgba(var(--accent-primary-rgb, 255, 215, 0), 0.1);
+}
+
+#modelCanvas {
+    display: block; 
+    width: 100% !important; 
+    height: 100% !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .viewer-page-content h1 {
+        font-size: 1.5rem;
+    }
+    #controlsContainer {
+        flex-direction: column;
+        width: 90%;
+        padding: 1rem;
+    }
+    #modelSelect {
+        width: 100%;
+        min-width: unset;
+    }
+    #viewerContainer {
+        height: 50vh;
+        min-height: 350px;
+    }
+}
+
+/* Fallback root variables for standalone testing */
+:root {
+    --bg-primary-rgb: 10, 10, 20;
+    --bg-secondary-rgb: 28, 28, 43;
+    --bg-accent-rgb: 42, 42, 63;
+    --text-primary: #EAEAEA;
+    --text-secondary: #C0C0C0;
+    --accent-primary: #FFD700;
+    --accent-primary-rgb: 255, 215, 0;
+    --accent-secondary: #FFA500;
+} 

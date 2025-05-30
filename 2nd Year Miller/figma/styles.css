@@ -1,0 +1,349 @@
+/* Add font files for Newsreader and Inter */
+/* Assuming you have these font files locally in a 'fonts' folder */
+@font-face {
+  font-family: 'Newsreader';
+  src: url('fonts/newsreader.woff2') format('woff2'),
+       url('fonts/newsreader.woff') format('woff');
+  font-weight: normal; /* Adjust weight as needed */
+  font-style: normal; /* Adjust style as needed */
+}
+/* Using Google Fonts link for Inter, included in HTML */
+
+/* --- Variables --- */
+:root {
+  --font-family-inter: 'Inter', sans-serif;
+  --font-family-newsreader: 'Newsreader', serif; /* Add fallback */
+  --color-text-black: rgba(0, 0, 0, 1);
+  --color-text-green: rgba(66, 107, 31, 1);
+  --color-text-white: rgba(255, 255, 255, 1);
+  --color-background-main: rgba(255, 255, 255, 1);
+  --color-background-card: rgba(250, 250, 245, 1);
+  --color-border-light: rgba(230, 230, 230, 1);
+  --color-border-input: rgba(0, 0, 0, 0.06);
+  --color-icon-grey: rgba(109, 109, 109, 1);
+  --color-button-primary-bg: rgba(66, 107, 31, 1);
+
+  --line-height-normal: 1.3; /* Simplified line height */
+  --border-radius-card: 24px;
+  --border-radius-input: 20px;
+  --border-radius-button-sm: 4px;
+  --border-radius-button-md: 8px;
+}
+
+/* --- CSS Reset & Basic Styles --- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-family-inter);
+  background-color: var(--color-background-main);
+  color: var(--color-text-black);
+  line-height: var(--line-height-normal);
+  width: 100%;
+  min-height: 100vh;
+  overflow-x: hidden; /* Prevent horizontal scroll */
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block; /* Remove extra space below images */
+}
+
+ul {
+  list-style: none;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  font-family: inherit;
+  font-size: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  color: inherit;
+}
+
+h1, h2, h3 {
+    line-height: 1.2; /* Adjust heading line height */
+}
+
+hr {
+    border: none;
+    border-top: 2px solid var(--color-border-light);
+    margin: 20px 0; /* Example spacing */
+}
+
+/* --- Page Container & Layout --- */
+.page-container {
+  max-width: 1440px; /* Example max width */
+  margin: 0 auto;
+  padding: 0 24px; /* Corresponds to original padding */
+}
+
+.cart-layout {
+  display: flex;
+  flex-wrap: wrap; /* Allow summary to wrap below items on smaller screens */
+  gap: 30px; /* Space between items list and summary */
+  margin-top: 30px; /* Space below heading */
+}
+
+.product-list__container {
+  flex: 2; /* Takes up more space */
+  min-width: 300px; /* Prevent excessive shrinking */
+}
+
+.order-summary {
+  flex: 1; /* Takes up less space */
+  min-width: 280px; /* Prevent excessive shrinking */
+  background-color: var(--color-background-card);
+  border: 2px solid var(--color-border-light);
+  border-radius: var(--border-radius-card);
+  padding: 24px;
+  align-self: flex-start; /* Align to top */
+  height: fit-content; /* Adjust height to content */
+}
+
+/* --- Navigation --- */
+.main-header {
+    padding: 20px 0; /* Example padding */
+}
+
+.main-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap; /* Allow wrapping on small screens */
+  gap: 15px;
+}
+
+.main-nav__logo {
+  font-family: var(--font-family-newsreader);
+  font-weight: 500;
+  font-size: 32px;
+  letter-spacing: -0.01em;
+  color: var(--color-text-green);
+}
+
+.main-nav__links {
+  display: flex;
+  gap: 25px; /* Space between links */
+  flex-wrap: wrap;
+}
+
+.main-nav__link {
+  font-size: 16px;
+}
+.main-nav__link:hover {
+    color: var(--color-text-green); /* Example hover effect */
+}
+
+.main-nav__cart-button {
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--color-text-white);
+  background-color: var(--color-button-primary-bg);
+  border-radius: var(--border-radius-button-sm);
+  padding: 10px 20px;
+}
+
+/* --- Page Heading --- */
+.page-heading {
+  padding: 20px 0;
+}
+
+.page-heading h1 { /* Target h1 specifically */
+  font-family: var(--font-family-newsreader);
+  font-weight: normal;
+  font-size: 64px;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin-bottom: 5px;
+}
+
+.page-heading__item-count {
+  font-weight: 300;
+  font-size: 20px;
+}
+
+.page-heading__divider {
+    box-shadow: 0px 4px 4px 0px rgba(0,0,0,0.1); /* Soften shadow */
+    margin-top: 20px;
+}
+
+/* --- Product List & Items --- */
+.product-list__container h2, .order-summary h2 {
+    font-family: var(--font-family-inter);
+    font-weight: 700;
+    font-size: 20px;
+    margin-bottom: 15px;
+}
+
+.product-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.product-item {
+  display: flex;
+  align-items: flex-start; /* Align items to top */
+  gap: 20px;
+  background-color: var(--color-background-card);
+  border: 2px solid var(--color-border-light);
+  border-radius: var(--border-radius-card);
+  padding: 20px;
+}
+
+.product-item__image {
+  width: 100px; /* Fixed image width */
+  height: 100px; /* Fixed image height */
+  object-fit: cover; /* Ensure image covers area */
+  border-radius: 12px; /* Rounded corners for image */
+  flex-shrink: 0;
+}
+
+.product-item__details {
+  flex-grow: 1; /* Allow details to take remaining space */
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.product-item__name {
+  font-weight: 700;
+  font-size: 20px;
+}
+
+.product-item__price-unit {
+  font-weight: 700; /* Was bold */
+  font-size: 18px; /* Slightly smaller */
+  color: var(--color-text-green);
+}
+
+.product-item__quantity-selector {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--color-background-main);
+  border: 2px solid var(--color-border-input);
+  border-radius: var(--border-radius-input);
+  padding: 8px 12px;
+  max-width: 120px; /* Limit width */
+  margin-top: 10px; /* Space above quantity */
+}
+
+.product-item__quantity-value {
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.product-item__quantity-button {
+  display: flex; /* To center icon if needed */
+  align-items: center;
+  justify-content: center;
+}
+
+.product-item__quantity-button img {
+   width: 12px; /* Adjust icon size */
+   height: 12px;
+   fill: var(--color-icon-grey); /* Use fill for SVG */
+}
+
+.product-item__price-total {
+  font-weight: 700;
+  font-size: 20px;
+  margin-left: auto; /* Push to the right */
+  padding-left: 20px; /* Add some space */
+  text-align: right;
+  min-width: 80px; /* Ensure minimum width for alignment */
+}
+
+/* --- Order Summary --- */
+.order-summary__details {
+  margin-bottom: 20px; /* Space before total */
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Space between lines */
+}
+
+.order-summary__line {
+  display: flex;
+  justify-content: space-between;
+  font-size: 16px;
+}
+
+.order-summary__total-line {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 700;
+  font-size: 16px;
+  border-top: 1px solid var(--color-border-light); /* Separator line */
+  padding-top: 15px;
+  margin-top: 15px; /* Space above total line */
+}
+
+.order-summary__cta-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%; /* Full width */
+  margin-top: 20px; /* Space above button */
+  padding: 12px 20px;
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--color-text-white);
+  background-color: var(--color-button-primary-bg);
+  border-radius: var(--border-radius-button-md);
+}
+
+.order-summary__cta-icon {
+  width: 16px; /* Adjust icon size */
+  height: auto;
+  /* The original had a border, but it's an SVG path, likely shouldn't have border */
+}
+
+
+/* --- Media Queries --- */
+/* Fixed the structure from the original file */
+@media (max-width: 768px) {
+  .page-container {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  .cart-layout {
+    flex-direction: column; /* Stack items and summary */
+  }
+  .main-nav {
+      justify-content: center; /* Center nav items on small screens */
+  }
+  .main-nav__links {
+      justify-content: center;
+      width: 100%;
+      margin-top: 10px;
+  }
+  .product-item {
+      flex-direction: column; /* Stack image, details, price */
+      align-items: center;
+      text-align: center;
+  }
+  .product-item__details {
+      align-items: center;
+  }
+  .product-item__price-total {
+      margin-left: 0;
+      margin-top: 10px;
+      text-align: center;
+      width: 100%;
+  }
+
+}

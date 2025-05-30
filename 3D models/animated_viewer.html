@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animated 3D Model Viewer</title>
+    <!-- Shared theme CSS -->
+    <link rel="stylesheet" href="../shared-theme.css">
+    <!-- Page-specific CSS -->
+    <link rel="stylesheet" href="animated_viewer.css">
+    <!-- THREE.js CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+    <canvas id="spaceBackgroundCanvas"></canvas>
+
+    <header id="mainHeader">
+        <div class="header-content">
+            <div class="logo-title">GeoRealm</div>
+            <nav id="mainNav">
+                <a href="../index.html#tools" class="nav-link">Back to Geo Tools</a>
+                <a href="viewer.html" class="nav-link">Static Models</a>
+                <a href="../index.html" class="nav-link">Home</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="page-main-content">
+        <div class="content-wrapper viewer-page-content animated-viewer-content">
+            <h1>Animated 3D Crystal Models</h1>
+            <div id="controlsContainer">
+                <div>
+                    <label for="modelSelect">Select Animated Model:</label>
+                    <select id="modelSelect"></select>
+                </div>
+    
+                <div id="modeSelectorContainer">
+                    <label><input type="radio" name="animationMode" value="individual" checked> Individual Animation</label>
+                    <label><input type="radio" name="animationMode" value="all"> Play All Mode</label>
+                </div>
+    
+                <div id="individualAnimationControls">
+                    <label for="animationSelect">Select Animation:</label>
+                    <select id="animationSelect"></select>
+                    <button id="playPauseBtn" class="btn">Play</button>
+                    <label for="timeSlider">Time:</label>
+                    <input type="range" id="timeSlider" min="0" max="1" step="0.01" value="0">
+                    <span id="timeDisplay">0.00s</span>
+                </div>
+    
+                <div id="allAnimationControls" style="display: none;">
+                    <button id="masterPlayAllBtn" class="btn">Play All Animations</button>
+                    <button id="pauseAllBtn" class="btn btn-secondary">Pause All</button>
+                    <div id="masterPlaybackControls">
+                        <label for="masterTimeSlider">Overall Progress:</label>
+                        <input type="range" id="masterTimeSlider" min="0" max="1" step="0.01" value="0">
+                        <span id="masterTimeDisplay">0.00s / 0.00s</span>
+                    </div>
+                </div>
+    
+                <p id="loadingIndicator" style="display: none;">Loading model...</p>
+            </div>
+            <div id="viewerContainer">
+                <canvas id="modelCanvas"></canvas>
+            </div>
+        </div>
+    </main>
+
+    <footer id="siteFooter">
+        <div class="footer-content">
+            <p>&copy; 2024 GeoRealm by NORSU Innovators. All rights reserved.</p>
+            <p>Animated 3D Model Viewer</p>
+        </div>
+    </footer>
+
+    <script src="../background-scene.js"></script>
+    <script src="animated_viewer.js"></script>
+</body>
+</html> 

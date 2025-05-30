@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bravais Lattice Explorer</title>
+    <!-- TailwindCSS CDN (still used for primary layout within content) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Shared theme CSS -->
+    <link rel="stylesheet" href="../shared-theme.css">
+    <!-- Page-specific CSS -->
+    <link rel="stylesheet" href="style.css"> 
+    <!-- Three.js for background -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        /* Tailwind overrides or very specific styles can remain here if necessary, otherwise move to style.css */
+        .content-section { display: none; }
+        .content-section.active { display: block; }
+
+        /* Styles for tabs, can be themed further in style.css */
+        .tab-button { 
+            transition: background-color 0.3s, color 0.3s;
+            padding: 0.75rem 1.5rem; /* Adjusted padding */
+            margin: 0 0.25rem; /* Spacing between tabs */
+            border-radius: 6px 6px 0 0; /* Rounded top corners */
+            font-weight: 500;
+            color: var(--text-secondary);
+            background-color: transparent; /* Theme default */
+            border-bottom: 2px solid transparent;
+        }
+        .tab-button.active { 
+            color: var(--accent-primary);
+            border-bottom-color: var(--accent-primary);
+            background-color: rgba(var(--accent-primary-rgb), 0.1);
+        }
+        .tab-button:not(.active):hover { 
+            color: var(--accent-tertiary);
+            border-bottom-color: var(--accent-tertiary);
+        }
+        /* Ensure WebGL canvas within the page has a border from its own CSS if needed, not here */
+    </style>
+</head>
+<body>
+    <canvas id="spaceBackgroundCanvas"></canvas>
+
+    <header id="mainHeader">
+        <div class="header-content">
+            <div class="logo-title">GeoRealm</div>
+            <nav id="mainNav">
+                <a href="../index.html#tools" class="nav-link">Back to Geo Tools</a>
+                <a href="../index.html" class="nav-link">Home</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="page-main-content">
+        <div class="bravais-content-wrapper"> 
+            <header class="bravais-header">
+                <h1>2D Bravais Lattice Explorer</h1>
+                <p>Learn about lattices and test your knowledge!</p>
+            </header>
+
+            <nav class="bravais-tabs">
+                <button id="tab-learn" class="tab-button active">Learning Center</button>
+                <button id="tab-game1" class="tab-button">Game: Name Lattice</button>
+                <button id="tab-game2" class="tab-button">Game: Place Unit Cell</button>
+            </nav>
+
+            <section id="learn-section" class="content-section active">
+                <h2>Learning Center</h2>
+                <p class="mb-6">Explore the fundamental concepts of Bravais lattices, unit cells, and their classifications in 2D, based strictly on the information from the provided reference videos.</p>
+                <div class="info-box">
+                    <p><strong>Note:</strong> All information and diagrams presented here are derived *exclusively* from the content of the three reference YouTube videos mentioned earlier. No external crystallographic knowledge is included.
+                    </p>
+                </div>
+                <article id="learn-intro">
+                    <h3>1. Introduction to Lattices (from Video 1)</h3>
+                    <p><strong>Crystalline Solids:</strong> These materials, like sodium chloride (NaCl), have their constituent atoms arranged in a very regular, ordered way. This regular arrangement is a key property.</p>
+                    <p><strong>Long-Range Order:</strong> The same pattern of atoms repeats throughout the entire crystal.</p>
+                    <p><strong>Translational Symmetry:</strong> If you shift the crystal by a specific unit (a translation vector), you end up with the exact same arrangement. This is a crucial property of crystals. Non-crystalline arrangements lack this.</p>
+                    <canvas id="canvas-translational-symmetry" width="300" height="150"></canvas>
+                    <p class="canvas-caption">Fig 1: Simple 2D lattice illustrating translational symmetry.</p>
+                    <p><strong>Lattice Points:</strong> To simplify, we use abstract points in space called lattice points. Each lattice point has an identical environment to every other lattice point. The arrangement of these points also shows translational symmetry.</p>
+                    <p><strong>Lattice:</strong> A lattice is a periodic arrangement of points in space. It's a purely mathematical abstraction representing the underlying symmetry of the crystal structure.</p>
+                    <canvas id="canvas-simple-lattice" width="300" height="150"></canvas>
+                    <p class="canvas-caption">Fig 2: A simple 2D lattice of points.</p>
+                    <p><strong>Basis:</strong> The actual atoms or molecules that are placed at each lattice point are called the basis. A basis can be a single atom or a group of atoms.</p>
+                    <p><strong>Crystal Structure:</strong> The crystal structure is formed by combining the lattice and the basis. So, <strong>Crystal Structure = Lattice + Basis</strong>. The same lattice can have different bases, leading to different crystal structures, but they all share the same underlying translational symmetry defined by the lattice.</p>
+                </article>
+                <article id="learn-unit-cells" class="learn-article">
+                    <h3>2. Unit Cells (from Video 2)</h3>
+                    <p><strong>What is a Unit Cell?</strong> A unit cell is a basic repeating unit (a small area in 2D, or volume in 3D) that, through translation (stacking it side-by-side without rotation or gaps), can cover the entire lattice. There can be multiple ways to define a unit cell for a given lattice.</p>
+                    <canvas id="canvas-unit-cell" width="300" height="150"></canvas>
+                    <p class="canvas-caption">Fig 3: A lattice with one possible unit cell highlighted.</p>
+                    <p><strong>Primitive Unit Cell:</strong> A unit cell that has lattice points *only* at its corners. If you count the lattice points belonging to one primitive unit cell (e.g., by taking 1/4 of each corner point in 2D for a square/rectangular cell), it totals to one lattice point per primitive cell.</p>
+                    <p><strong>Non-Primitive (or Conventional) Unit Cell:</strong> A unit cell that contains lattice points at additional positions besides the corners (e.g., one in the center, or on faces). These contain more than one lattice point per cell. While many non-primitive cells can be defined, primitive cells are often preferred. However, sometimes a non-primitive cell is chosen if it better shows the symmetry of the lattice (e.g., a centered rectangular cell for certain rhombic lattices).</p>
+                    <canvas id="canvas-primitive-vs-nonprimitive" width="400" height="200"></canvas>
+                    <p class="canvas-caption">Fig 4: Examples of primitive (left) and non-primitive/centered (right) unit cells.</p>
+                    <p><strong>Choosing the Most Symmetrical Unit Cell:</strong> When multiple unit cells can describe a lattice, the one that shows the highest symmetry of the lattice should be chosen. This is because it better reflects the global symmetry of the entire lattice. For example, for a square lattice, a square unit cell is preferred over an oblique parallelogram unit cell, even though both can tile the lattice, because the square unit cell has higher symmetry (C4 rotation).</p>
+                    <p><strong>Symmetry and Axes of Rotation (as mentioned in Video 2 for 2D):</strong>
+                        <ul><li>A square has a C4 axis of symmetry (repeats every 90° rotation) and C2 axes.</li><li>An oblique parallelogram (general shape) only has a C2 axis of symmetry (repeats every 180° rotation).</li></ul>
+                    If a lattice repeats itself after a certain rotation, the chosen unit cell should also possess that symmetry.
+                    </p>
+                </article>
+                <article id="learn-2d-lattices" class="learn-article">
+                    <h3>3. Classification of 2D Bravais Lattices (from Video 3)</h3>
+                    <p>While infinitely many different Bravais lattices can be created in 2D by varying distances and angles, they can be classified into a small number of types based on their unit cell shapes and symmetries. There are <strong>five</strong> distinct 2D Bravais lattices, categorized into <strong>four</strong> crystal systems.</p>
+                    <p>These fundamental shapes are the only ones that can fully cover a 2D area via translation while maintaining the definition of a Bravais lattice.</p>
+                    <div class="lattice-grid">
+                        <div>
+                            <strong>1. Oblique Lattice</strong>
+                            <ul><li>Unit Cell: Parallelogram (general: sides a ≠ b, angle γ ≠ 90°).</li><li>Symmetry: Lowest symmetry, C2 rotational symmetry (180°).</li></ul>
+                            <canvas id="canvas-oblique" width="200" height="150"></canvas>
+                            <p class="canvas-caption">Fig 5: Oblique Lattice.</p>
+                        </div>
+                        <div>
+                            <strong>2. Rectangular Lattice (Primitive)</strong>
+                            <ul><li>Unit Cell: Rectangle (sides a ≠ b, angle γ = 90°).</li><li>Symmetry: Higher than oblique. (Implied C2 axes from geometry).</li></ul>
+                            <canvas id="canvas-rectangular-p" width="200" height="150"></canvas>
+                            <p class="canvas-caption">Fig 6: Rectangular (P) Lattice.</p>
+                        </div>
+                        <div>
+                            <strong>3. Rectangular Lattice (Centered)</strong>
+                            <ul><li>Unit Cell: Centered Rectangle (non-primitive). This is preferred over a primitive rhombus for general rhombic lattices because the centered rectangle often shows the symmetry better.</li><li>Symmetry: Same as primitive rectangular.</li></ul>
+                            <canvas id="canvas-rectangular-c" width="200" height="150"></canvas>
+                            <p class="canvas-caption">Fig 7: Rectangular (C) Lattice.</p>
+                        </div>
+                        <div>
+                            <strong>4. Square Lattice</strong>
+                            <ul><li>Unit Cell: Square (sides a = b, angle γ = 90°).</li><li>Symmetry: High symmetry, C4 rotational symmetry (90°). A centered square lattice is equivalent to a primitive square lattice rotated by 45°.</li></ul>
+                            <canvas id="canvas-square" width="150" height="150"></canvas>
+                            <p class="canvas-caption">Fig 8: Square Lattice.</p>
+                        </div>
+                        <div class="lattice-grid-full">
+                            <strong>5. Hexagonal Lattice</strong>
+                            <ul><li>Unit Cell: A rhombus with angles 60° and 120° (sides a = b). This unit cell, when repeated, forms a hexagonal pattern. It's a primitive cell for the hexagonal lattice. (Video 3 refers to it as hexagonal centered, implying the overall pattern formed by this primitive cell).</li><li>Symmetry: Highest 2D symmetry, C6 rotational symmetry (60°).</li><li>Note: A simple honeycomb structure (like graphene) is NOT a Bravais lattice because not all atomic positions are equivalent by translation (it requires a two-atom basis on a hexagonal lattice). Hexagonal Bravais lattices have a lattice point at the center of the hexagon formed by other points if you consider a larger conventional cell, or are described by the primitive rhombus.</li></ul>
+                            <canvas id="canvas-hexagonal" width="200" height="173"></canvas>
+                            <p class="canvas-caption">Fig 9: Hexagonal Lattice (primitive rhombus unit cell shown).</p>
+                        </div>
+                    </div>
+                </article>
+            </section>
+
+            <section id="game1-section" class="content-section">
+                <h2>Interactive Game: Name That Lattice!</h2>
+                <p>Identify the 2D Bravais lattice type shown below. All lattice representations are based on the concepts from the reference videos.</p>
+                <div class="game-container">
+                    <canvas id="game-canvas" width="300" height="200"></canvas>
+                    <div id="question-text" class="game-question">What type of 2D Bravais lattice is this?</div>
+                    <div id="answer-buttons" class="game-answers"></div>
+                    <div id="feedback" class="game-feedback"></div>
+                    <button id="next-question" class="btn">Next Question</button>
+                </div>
+            </section>
+
+            <section id="game2-section" class="content-section">
+                <h2>Interactive Game: Place Unit Cell</h2>
+                <div class="placer-controls">
+                    <p>Select a shape to place on the lattice:</p>
+                    <div id="shape-selector-container">
+                        </div>
+                </div>
+                <p id="instructions-placer">A random 2D Bravais lattice is shown. Select a shape, then drag it and try to place its corners onto the lattice points. The shape will snap if close enough.</p>
+                 <div class="game-container">
+                    <canvas id="placer-canvas" width="400" height="300"></canvas>
+                    <div id="current-lattice-info" class="game-info">Current Lattice: <span id="placer-lattice-name"></span> (Draggable shape: <span id="draggable-shape-name">None</span>)</div>
+                    <div id="feedback-placer" class="game-feedback"></div>
+                    <button id="new-placer-lattice" class="btn">Show New Lattice</button>
+                    <button id="reset-draggable-shape" class="btn btn-secondary">Reset Current Shape</button>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer id="siteFooter">
+        <div class="footer-content">
+            <p>&copy; 2024 GeoRealm by NORSU Innovators. All rights reserved.</p>
+            <p>Bravais Lattice Explorer</p>
+        </div>
+    </footer>
+
+    <script src="../background-scene.js"></script>
+    <!-- Keep existing script for Bravais Lattices page logic -->
+    <script>
+        // ... (The existing long script content from brav lats/index.html will be here) ...
+        // WebGL Helper Functions (Largely Unchanged)
+        function initWebGL(canvas, clearColor = [0.95, 0.95, 0.95, 1.0]) { 
+            const localGl = canvas.getContext('webgl');
+            if (!localGl) { console.error("WebGL not supported on canvas:", canvas.id); canvas.parentElement.innerHTML = `<p class='text-red-500 text-center'>WebGL not supported for ${canvas.id}.</p>`; return null; }
+            localGl.viewport(0, 0, canvas.width, canvas.height);
+            localGl.clearColor(...clearColor);
+            return localGl;
+         }
+        function createShader(currentGl, type, source) { const s = currentGl.createShader(type); currentGl.shaderSource(s, source); currentGl.compileShader(s); if (!currentGl.getShaderParameter(s, currentGl.COMPILE_STATUS)) { console.error('Error compiling shader:', currentGl.getShaderInfoLog(s)); currentGl.deleteShader(s); return null; } return s; }
+        function createProgram(currentGl, vertexShader, fragmentShader) { const p = currentGl.createProgram(); currentGl.attachShader(p, vertexShader); currentGl.attachShader(p, fragmentShader); currentGl.linkProgram(p); if (!currentGl.getProgramParameter(p, currentGl.LINK_STATUS)) { console.error('Error linking program:', currentGl.getProgramInfoLog(p)); currentGl.deleteProgram(p); return null; } return p; }
+        const vsSource = `attribute vec2 aVertexPosition; uniform vec2 uResolution; uniform vec2 uTranslation; uniform float uPointSize; void main() { vec2 translatedPosition = aVertexPosition + uTranslation; vec2 zeroToOne = translatedPosition / uResolution; vec2 zeroToTwo = zeroToOne * 2.0; vec2 clipSpace = zeroToTwo - 1.0; gl_Position = vec4(clipSpace * vec2(1, -1), 0, 1); gl_PointSize = uPointSize; }`;
+        const fsSource = `precision mediump float; uniform vec4 uColor; void main() { gl_FragColor = uColor; }`;
+        const shaderPrograms = new Map();
+        function getShaderProgram(currentGl) {
+            if (shaderPrograms.has(currentGl)) return shaderPrograms.get(currentGl);
+            const vertexShader = createShader(currentGl, currentGl.VERTEX_SHADER, vsSource);
+            const fragmentShader = createShader(currentGl, currentGl.FRAGMENT_SHADER, fsSource);
+            const newProgram = createProgram(currentGl, vertexShader, fragmentShader);
+            if (newProgram) {
+                newProgram.vertexPositionAttribute = currentGl.getAttribLocation(newProgram, "aVertexPosition");
+                newProgram.resolutionUniform = currentGl.getUniformLocation(newProgram, "uResolution");
+                newProgram.translationUniform = currentGl.getUniformLocation(newProgram, "uTranslation");
+                newProgram.pointSizeUniform = currentGl.getUniformLocation(newProgram, "uPointSize");
+                newProgram.colorUniform = currentGl.getUniformLocation(newProgram, "uColor");
+                shaderPrograms.set(currentGl, newProgram);
+            }
+            return newProgram;
+        }
+        function drawPoints(currentGl, pointsData, translation = [0,0]) {
+            const sp = getShaderProgram(currentGl);
+            if (!currentGl || !sp || !pointsData.color) { console.error("drawPoints: Missing GL, shader program, or pointsData.color", pointsData); return; }
+            currentGl.useProgram(sp); currentGl.enableVertexAttribArray(sp.vertexPositionAttribute);
+            currentGl.uniform2f(sp.resolutionUniform, currentGl.canvas.width, currentGl.canvas.height);
+            currentGl.uniform2fv(sp.translationUniform, translation); currentGl.uniform1f(sp.pointSizeUniform, pointsData.size);
+            currentGl.uniform4fv(sp.colorUniform, pointsData.color);
+            const buffer = currentGl.createBuffer(); currentGl.bindBuffer(currentGl.ARRAY_BUFFER, buffer);
+            currentGl.bufferData(currentGl.ARRAY_BUFFER, new Float32Array(pointsData.points), currentGl.STATIC_DRAW);
+            currentGl.vertexAttribPointer(sp.vertexPositionAttribute, 2, currentGl.FLOAT, false, 0, 0);
+            currentGl.drawArrays(currentGl.POINTS, 0, pointsData.points.length / 2); currentGl.deleteBuffer(buffer);
+        }
+        function drawLines(currentGl, linePoints, color = [0.3,0.3,0.3,1.0], translation = [0,0]) {
+            const sp = getShaderProgram(currentGl); if (!currentGl || !sp) return;
+            currentGl.useProgram(sp); currentGl.enableVertexAttribArray(sp.vertexPositionAttribute);
+            currentGl.uniform2f(sp.resolutionUniform, currentGl.canvas.width, currentGl.canvas.height);
+            currentGl.uniform2fv(sp.translationUniform, translation); currentGl.uniform1f(sp.pointSizeUniform, 1.0);
+            currentGl.uniform4fv(sp.colorUniform, color);
+            const buffer = currentGl.createBuffer(); currentGl.bindBuffer(currentGl.ARRAY_BUFFER, buffer);
+            currentGl.bufferData(currentGl.ARRAY_BUFFER, new Float32Array(linePoints), currentGl.STATIC_DRAW);
+            currentGl.vertexAttribPointer(sp.vertexPositionAttribute, 2, currentGl.FLOAT, false, 0, 0);
+            currentGl.drawArrays(currentGl.LINES, 0, linePoints.length / 2); currentGl.deleteBuffer(buffer);
+        }
+        function drawPolygon(currentGl, polyPoints, color = [0.6,0.6,0.9,0.5], translation = [0,0]) { 
+            const sp = getShaderProgram(currentGl); if (!currentGl || !sp) return;
+            currentGl.useProgram(sp); currentGl.enableVertexAttribArray(sp.vertexPositionAttribute);
+            currentGl.uniform2f(sp.resolutionUniform, currentGl.canvas.width, currentGl.canvas.height);
+            currentGl.uniform2fv(sp.translationUniform, translation); 
+            currentGl.uniform1f(sp.pointSizeUniform, 1.0);
+            currentGl.uniform4fv(sp.colorUniform, color);
+            const buffer = currentGl.createBuffer(); currentGl.bindBuffer(currentGl.ARRAY_BUFFER, buffer);
+            currentGl.bufferData(currentGl.ARRAY_BUFFER, new Float32Array(polyPoints), currentGl.STATIC_DRAW);
+            currentGl.vertexAttribPointer(sp.vertexPositionAttribute, 2, currentGl.FLOAT, false, 0, 0);
+            currentGl.drawArrays(currentGl.TRIANGLE_FAN, 0, polyPoints.length / 2); currentGl.deleteBuffer(buffer);
+        }
+
+        const defaultPointColor = [0.1,0.1,0.8,1]; // Defined for learning canvases
+        const learningCanvasBgColor = [0.9, 0.92, 0.98, 1.0]; // Light blueish-gray for learning canvases
+
+        function drawLatticePointsForLearning(canvasId, pointsData, unitCellLines = [], unitCellFill = []) {
+            const canvas = document.getElementById(canvasId); if (!canvas) return;
+            const currentGl = initWebGL(canvas, learningCanvasBgColor); // Use specific bg for learning
+            if (!currentGl) return;
+            currentGl.clear(currentGl.COLOR_BUFFER_BIT);
+            if (unitCellFill.length > 0) drawPolygon(currentGl, unitCellFill, [0.7,0.7,0.95,0.5]);
+            if (unitCellLines.length > 0) drawLines(currentGl, unitCellLines, [0.2,0.2,0.7,1.0]);
+            const finalPointsData = { ...pointsData }; if (!finalPointsData.color) finalPointsData.color = defaultPointColor;
+            drawPoints(currentGl, finalPointsData);
+        }
+        function drawTranslationalSymmetry(){const p=[];for(let i=0;i<5;i++)for(let j=0;j<3;j++)p.push(50+i*50,40+j*50);drawLatticePointsForLearning('canvas-translational-symmetry',{points:p,color:[0.1,0.6,0.1,1],size:6});}
+        function drawSimpleLattice(){const p=[];for(let i=0;i<6;i++)for(let j=0;j<3;j++)p.push(30+i*40,40+j*40);drawLatticePointsForLearning('canvas-simple-lattice',{points:p,color:defaultPointColor,size:5});}
+        function drawUnitCellExample(){const p=[];for(let i=0;i<5;i++)for(let j=0;j<3;j++)p.push(50+i*50,40+j*50);const ucl=[50,40,100,40,100,40,100,90,100,90,50,90,50,90,50,40];const ucf=[50,40,100,40,100,90,50,90];drawLatticePointsForLearning('canvas-unit-cell',{points:p,size:5,color:defaultPointColor},ucl,ucf);}
+        function drawPrimitiveVsNonPrimitive(){const c=document.getElementById('canvas-primitive-vs-nonprimitive');const g=initWebGL(c, learningCanvasBgColor);if(!g)return;g.clear(g.COLOR_BUFFER_BIT);let pl=[];for(let i=0;i<3;i++)for(let j=0;j<3;j++)pl.push(30+i*50,50+j*50);const ull=[30,50,80,50,80,50,80,100,80,100,30,100,30,100,30,50];const ulf=[30,50,80,50,80,100,30,100];g.viewport(0,0,c.width/2,c.height);drawPolygon(g,ulf,[0.7,0.85,0.95,0.5]);drawLines(g,ull);drawPoints(g,{points:pl,color:defaultPointColor,size:5});let pr=[];const ox=200;for(let i=0;i<2;i++)for(let j=0;j<2;j++){pr.push(ox+30+i*60,50+j*50);pr.push(ox+30+i*60+30,50+j*50+25);}const url=[ox+30,50,ox+90,50,ox+90,50,ox+90,100,ox+90,100,ox+30,100,ox+30,100,ox+30,50];const urf=[ox+30,50,ox+90,50,ox+90,100,ox+30,100];g.viewport(c.width/2,0,c.width/2,c.height);const apr=pr.map((v,ix)=>ix%2===0?v-ox:v);const aur=url.map((v,ix)=>ix%2===0?v-ox:v);const aurf=urf.map((v,ix)=>ix%2===0?v-ox:v);drawPolygon(g,aurf,[0.85,0.7,0.95,0.5]);drawLines(g,aur,[0.7,0.2,0.2,1]);drawPoints(g,{points:apr,color:[0.8,0.1,0.1,1],size:5});g.viewport(0,0,c.width,c.height);}
+        function drawOblique(){const p=[];const a1=[40,0],a2=[20,35];for(let i=0;i<4;i++)for(let j=0;j<3;j++)p.push(40+i*a1[0]+j*a2[0],40+i*a1[1]+j*a2[1]);const uc=[40,40,40+a1[0],40+a1[1],40+a1[0]+a2[0],40+a1[1]+a2[1],40+a2[0],40+a2[1]];const ucl=[uc[0],uc[1],uc[2],uc[3],uc[2],uc[3],uc[4],uc[5],uc[4],uc[5],uc[6],uc[7],uc[6],uc[7],uc[0],uc[1]];drawLatticePointsForLearning('canvas-oblique',{points:p,size:5,color:defaultPointColor},ucl,uc);}
+        function drawRectangularP(){const p=[];for(let i=0;i<4;i++)for(let j=0;j<3;j++)p.push(40+i*50,40+j*35);const uc=[40,40,90,40,90,75,40,75];const ucl=[40,40,90,40,90,40,90,75,90,75,40,75,40,75,40,40];drawLatticePointsForLearning('canvas-rectangular-p',{points:p,size:5,color:defaultPointColor},ucl,uc);}
+        function drawRectangularC(){const p=[];const w=50,h=35;for(let i=0;i<3;i++)for(let j=0;j<3;j++){p.push(40+i*w,40+j*h);p.push(40+i*w+w/2,40+j*h+h/2);}const uc=[40,40,40+w,40,40+w,40+h,40,40+h];const ucl=[uc[0],uc[1],uc[2],uc[3],uc[2],uc[3],uc[4],uc[5],uc[4],uc[5],uc[6],uc[7],uc[6],uc[7],uc[0],uc[1]];drawLatticePointsForLearning('canvas-rectangular-c',{points:p,size:5,color:defaultPointColor},ucl,uc);}
+        function drawSquare(){const p=[];const s=40;for(let i=0;i<3;i++)for(let j=0;j<3;j++)p.push(35+i*s,35+j*s);const uc=[35,35,35+s,35,35+s,35+s,35,35+s];const ucl=[uc[0],uc[1],uc[2],uc[3],uc[2],uc[3],uc[4],uc[5],uc[4],uc[5],uc[6],uc[7],uc[6],uc[7],uc[0],uc[1]];drawLatticePointsForLearning('canvas-square',{points:p,size:5,color:defaultPointColor},ucl,uc);}
+        function drawHexagonal(){const p=[];const s=40;const ht=s*Math.sqrt(3)/2;const a1=[s,0],a2=[s/2,ht];for(let i=-1;i<3;i++)for(let j=-1;j<3;j++)p.push(50+i*a1[0]+j*a2[0],50+i*a1[1]+j*a2[1]);const p0=[50,50],p1=[p0[0]+a1[0],p0[1]+a1[1]],p2=[p0[0]+a2[0],p0[1]+a2[1]],p3=[p0[0]+a1[0]+a2[0],p0[1]+a1[1]+a2[1]];const uc=[p0[0],p0[1],p1[0],p1[1],p3[0],p3[1],p2[0],p2[1]];const ucl=[p0[0],p0[1],p1[0],p1[1],p1[0],p1[1],p3[0],p3[1],p3[0],p3[1],p2[0],p2[1],p2[0],p2[1],p0[0],p0[1]];drawLatticePointsForLearning('canvas-hexagonal',{points:p,size:5,color:defaultPointColor},ucl,uc);}
+        
+        const gameCanvas1 = document.getElementById('game-canvas'); const answerButtonsContainer = document.getElementById('answer-buttons'); const feedbackDiv1 = document.getElementById('feedback'); const nextQuestionButton = document.getElementById('next-question'); let gameGL1; let currentLatticeTypeGame1 = '';
+        const game1LatticeTypes = [ { name: "Oblique", drawFunc: ()=>drawObliqueGame(gameGL1) }, { name: "Rectangular (Primitive)", drawFunc: ()=>drawRectangularPGame(gameGL1) }, { name: "Rectangular (Centered)", drawFunc: ()=>drawRectangularCGame(gameGL1) }, { name: "Square", drawFunc: ()=>drawSquareGame(gameGL1) }, { name: "Hexagonal", drawFunc: ()=>drawHexagonalGame(gameGL1) } ];
+        
+        const gameCanvasBgColor = [0.96, 0.98, 1.0, 1.0]; // Lightest blue for game canvases
+
+        function setupGame1Canvas() { gameGL1 = initWebGL(gameCanvas1, gameCanvasBgColor); if (!gameGL1) return; }
+        function drawObliqueGame(ctx){const p=[];const a1=[60,0],a2=[30,50];for(let i=0;i<4;i++)for(let j=0;j<3;j++)p.push(50+i*a1[0]+j*a2[0],25+i*a1[1]+j*a2[1]);drawPoints(ctx,{points:p,color:defaultPointColor,size:6});}
+        function drawRectangularPGame(ctx){const p=[];for(let i=0;i<5;i++)for(let j=0;j<3;j++)p.push(50+i*60,40+j*40);drawPoints(ctx,{points:p,color:defaultPointColor,size:6});}
+        function drawRectangularCGame(ctx){const p=[];const w=60,h=40;for(let i=0;i<4;i++)for(let j=0;j<3;j++){p.push(30+i*w,40+j*h);p.push(30+i*w+w/2,40+j*h+h/2);}drawPoints(ctx,{points:p,color:defaultPointColor,size:6});}
+        function drawSquareGame(ctx){const p=[];const s=50;for(let i=0;i<5;i++)for(let j=0;j<3;j++)p.push(30+i*s,30+j*s);drawPoints(ctx,{points:p,color:defaultPointColor,size:6});}
+        function drawHexagonalGame(ctx){const p=[];const s=50;const ht=s*Math.sqrt(3)/2;const a1=[s,0],a2=[s/2,ht];for(let i=-1;i<5;i++)for(let j=-1;j<4;j++)p.push(20+i*a1[0]+j*a2[0],10+i*a1[1]+j*a2[1]);drawPoints(ctx,{points:p,color:defaultPointColor,size:6});}
+        function loadQuestion() {
+            if (!gameGL1) { console.error("Game 1 GL context not ready."); return; }
+            gameGL1.clear(gameGL1.COLOR_BUFFER_BIT);
+            const randomIndex = Math.floor(Math.random() * game1LatticeTypes.length);
+            currentLatticeTypeGame1 = game1LatticeTypes[randomIndex].name;
+            game1LatticeTypes[randomIndex].drawFunc();
+            answerButtonsContainer.innerHTML = '';
+            const options = [...game1LatticeTypes.map(lt => lt.name)];
+            shuffleArray(options); 
+            options.forEach(opt => { const btn = document.createElement('button'); btn.textContent = opt; btn.classList.add('game-button'); btn.onclick = () => checkAnswer1(opt); answerButtonsContainer.appendChild(btn); });
+            feedbackDiv1.textContent = ''; feedbackDiv1.className = 'game-feedback';
+            nextQuestionButton.style.display = 'none';
+        }
+        function checkAnswer1(selectedType) {
+            document.querySelectorAll('#answer-buttons .game-button').forEach(b => b.disabled = true);
+            if (selectedType === currentLatticeTypeGame1) {
+                feedbackDiv1.textContent = 'Correct!'; feedbackDiv1.className = 'game-feedback correct';
+                answerButtonsContainer.querySelector(`.game-button:contains('${selectedType}')`).classList.add('correct');
+            } else {
+                feedbackDiv1.textContent = `Incorrect. This is a ${currentLatticeTypeGame1}.`;  feedbackDiv1.className = 'game-feedback incorrect';
+                answerButtonsContainer.querySelector(`.game-button:contains('${selectedType}')`).classList.add('incorrect');
+                answerButtonsContainer.querySelector(`.game-button:contains('${currentLatticeTypeGame1}')`).classList.add('correct');
+            }
+            nextQuestionButton.style.display = 'block';
+        }
+        function shuffleArray(array){for(let i=array.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[array[i],array[j]]=[array[j],array[i]];}}
+        nextQuestionButton.addEventListener('click', loadQuestion);
+        
+        // Polyfill for :contains pseudo-selector if needed for specific browsers (simplified for demo)
+        // Note: Pure CSS doesn't have :contains. This is a JS selection.
+        // A more robust way is to iterate and check textContent or use data-attributes.
+        // For this demo, we assume buttons are identifiable by their text.
+
+        // --- Game 2: Place Unit Cell Logic (Unchanged) ---
+        const placerCanvas = document.getElementById('placer-canvas'); const feedbackDiv2 = document.getElementById('feedback-placer'); const newLatticeButton = document.getElementById('new-placer-lattice'); const shapeSelectorContainer = document.getElementById('shape-selector-container'); const currentLatticeNameEl = document.getElementById('placer-lattice-name'); const draggableShapeNameEl = document.getElementById('draggable-shape-name'); const resetDraggableShapeBtn = document.getElementById('reset-draggable-shape'); let placerGL; let currentLatticePoints = []; let currentUnitCell = {}; let currentLatticeDataGame2 = {}; let draggableShape = { vertices: [], color: [0.9,0.2,0.2,0.7], offset: [0,0], placed: false, type: 'None' }; let isDragging = false; let dragStart = {x:0, y:0}; const snapDistance = 15;
+        const latticeDefinitionsGame2 = [ { name: "Oblique", params: {a:60,b:70,gamma:75}, unitCellType: 'parallelogram'}, { name: "Rectangular (P)", params: {a:80,b:50,gamma:90}, unitCellType: 'rectangle' }, { name: "Rectangular (C)", params: {a:80,b:100,gamma:90,centered:true}, unitCellType: 'rectangle' }, { name: "Square", params: {a:60,b:60,gamma:90}, unitCellType: 'square' }, { name: "Hexagonal", params: {a:50,b:50,gamma:60}, unitCellType: 'rhombus60' } ];
+        const draggableShapes = [ { name: 'Square', vertices: [[0,0],[50,0],[50,50],[0,50]], type: 'square' }, { name: 'Rectangle', vertices: [[0,0],[70,0],[70,40],[0,40]], type: 'rectangle' }, { name: 'Parallelogram (Oblique)', vertices: [[0,0],[60,0],[80,40],[20,40]], type: 'parallelogram' }, { name: 'Rhombus (60/120)', vertices: [[0,0],[50,0],[75,43.3],[25,43.3]], type: 'rhombus60' } ];
+        function generateLatticePoints(canvasWidth,canvasHeight,a,b,gammaDegrees,centered=false){const pts=[];const g=gammaDegrees*Math.PI/180;const vA=[a,0];const vB=[b*Math.cos(g),b*Math.sin(g)];const numVecA=Math.ceil(canvasWidth/a)+2;const numVecB=Math.ceil(canvasHeight/(b*Math.sin(g)))+2;const margin=20;for(let i=-2;i<numVecA;i++){for(let j=-2;j<numVecB;j++){const px=margin+i*vA[0]+j*vB[0];const py=margin+i*vA[1]+j*vB[1];if(px>-margin&&px<canvasWidth+margin&&py>-margin&&py<canvasHeight+margin)pts.push(px,py);if(centered){const pcx=margin+i*vA[0]+j*vB[0]+(vA[0]+vB[0])/2;const pcy=margin+i*vA[1]+j*vB[1]+(vA[1]+vB[1])/2;if(pcx>-margin&&pcx<canvasWidth+margin&&pcy>-margin&&pcy<canvasHeight+margin)pts.push(pcx,pcy);}}}return pts;}
+        function getUnitCellVertices(params, type) { let uc_verts = []; if (type === 'square' || type === 'rectangle') { uc_verts = [[0,0], [params.a,0], [params.a,params.b], [0,params.b]]; } else if (type === 'parallelogram') { const g=params.gamma*Math.PI/180; uc_verts = [[0,0], [params.a,0], [params.a+params.b*Math.cos(g), params.b*Math.sin(g)], [params.b*Math.cos(g), params.b*Math.sin(g)]]; } else if (type === 'rhombus60') { const g=60*Math.PI/180; uc_verts = [[0,0], [params.a,0], [params.a+params.a*Math.cos(g), params.a*Math.sin(g)], [params.a*Math.cos(g), params.a*Math.sin(g)]]; } return uc_verts; }
+        function setupPlacerCanvas(){placerGL=initWebGL(placerCanvas, gameCanvasBgColor);if(!placerGL)return;loadNewLatticeForPlacer();populateShapeSelector();}
+        function loadNewLatticeForPlacer(){if(!placerGL)return;placerGL.clear(placerGL.COLOR_BUFFER_BIT);const latticeDef=latticeDefinitionsGame2[Math.floor(Math.random()*latticeDefinitionsGame2.length)];currentLatticeDataGame2=latticeDef;currentLatticePoints=generateLatticePoints(placerCanvas.width,placerCanvas.height,latticeDef.params.a,latticeDef.params.b,latticeDef.params.gamma,latticeDef.params.centered);currentUnitCell.vertices=getUnitCellVertices(latticeDef.params,latticeDef.unitCellType);currentUnitCell.type=latticeDef.unitCellType;drawPoints(placerGL,{points:currentLatticePoints,color:[0.3,0.3,0.7,1],size:5});feedbackDiv2.textContent='';draggableShape.placed=false;draggableShape.offset=[placerCanvas.width/3,placerCanvas.height/3];currentLatticeNameEl.textContent=latticeDef.name;drawDraggableShape();}
+        function populateShapeSelector(){draggableShapes.forEach(shape=>{const btn=document.createElement('button');btn.textContent=shape.name;btn.classList.add('shape-selector-button', 'btn');btn.onclick=()=>{selectDraggableShape(shape);};shapeSelectorContainer.appendChild(btn);});}
+        function selectDraggableShape(shapeData){draggableShape.vertices=shapeData.vertices.map(v=>[...v]);draggableShape.type=shapeData.type;draggableShape.offset=[placerCanvas.width/3,placerCanvas.height/3];draggableShape.placed=false;draggableShapeNameEl.textContent=shapeData.name;document.querySelectorAll('.shape-selector-button').forEach(b=>b.classList.remove('active-shape'));const activeBtn=Array.from(shapeSelectorContainer.children).find(b=>b.textContent===shapeData.name);if(activeBtn)activeBtn.classList.add('active-shape');feedbackDiv2.textContent='Drag the shape to a valid unit cell position.';drawPlacerScene();}
+        function resetCurrentDraggableShape(){if(draggableShape.type==='None'){feedbackDiv2.textContent='Please select a shape first.';return;}draggableShape.offset=[placerCanvas.width/3,placerCanvas.height/3];draggableShape.placed=false;feedbackDiv2.textContent='Shape reset. Drag it to a valid unit cell position.';drawPlacerScene();}
+        function drawDraggableShape(){if(draggableShape.vertices.length===0||!placerGL)return;const transformedVertices=draggableShape.vertices.flat().map((val,idx)=>idx%2===0?val+draggableShape.offset[0]:val+draggableShape.offset[1]);drawPolygon(placerGL,transformedVertices,draggableShape.color);drawLines(placerGL,transformedVertices,[0.1,0.1,0.1,1.0]);}
+        function drawPlacerScene(){if(!placerGL)return;placerGL.clear(placerGL.COLOR_BUFFER_BIT);drawPoints(placerGL,{points:currentLatticePoints,color:[0.3,0.3,0.7,1],size:5});drawDraggableShape();}
+        function getTransformedShapeCorners(){return draggableShape.vertices.map(v=>[v[0]+draggableShape.offset[0],v[1]+draggableShape.offset[1]]);}
+        function checkPlacement(){const shapeCorners=getTransformedShapeCorners();if(shapeCorners.length<3){feedbackDiv2.textContent='Select a shape first.';return;}let allCornersMatch=true;for(const corner of shapeCorners){let closestPointDistSq=Infinity;for(let i=0;i<currentLatticePoints.length;i+=2){const dx=corner[0]-currentLatticePoints[i];const dy=corner[1]-currentLatticePoints[i+1];const distSq=dx*dx+dy*dy;if(distSq<closestPointDistSq)closestPointDistSq=distSq;}if(closestPointDistSq>snapDistance*snapDistance){allCornersMatch=false;break;}}if(allCornersMatch){if(draggableShape.type===currentLatticeDataGame2.unitCellType||(draggableShape.type==='parallelogram'&&currentLatticeDataGame2.unitCellType==='rhombus60'&&currentLatticeDataGame2.name==='Hexagonal')||(draggableShape.type==='rhombus60'&&currentLatticeDataGame2.unitCellType==='parallelogram'&&currentLatticeDataGame2.name==='Hexagonal')){feedbackDiv2.textContent=`Correct! This is a valid ${draggableShape.type} unit cell for the ${currentLatticeDataGame2.name} lattice.`;feedbackDiv2.className='game-feedback correct';draggableShape.color=[0.2,0.8,0.2,0.7];draggableShape.placed=true;}else{feedbackDiv2.textContent=`Shape placed on lattice points, but this ${draggableShape.type} is not the correct primitive unit cell for a ${currentLatticeDataGame2.name} lattice. (Hint: It needs a ${currentLatticeDataGame2.unitCellType} unit cell).`;feedbackDiv2.className='game-feedback incorrect';draggableShape.color=[0.8,0.5,0.2,0.7];}drawPlacerScene();}else{feedbackDiv2.textContent='Not all corners are on lattice points. Keep trying!';feedbackDiv2.className='game-feedback';draggableShape.color=[0.9,0.2,0.2,0.7];}}
+        placerCanvas.addEventListener('pointerdown',e=>{if(draggableShape.vertices.length===0||draggableShape.placed)return;const rect=placerCanvas.getBoundingClientRect();const x=e.clientX-rect.left;const y=e.clientY-rect.top;const transformedVertices=getTransformedShapeCorners();const path=new Path2D();path.moveTo(transformedVertices[0][0],transformedVertices[0][1]);for(let i=1;i<transformedVertices.length;i++)path.lineTo(transformedVertices[i][0],transformedVertices[i][1]);path.closePath();const tempCtx=document.createElement('canvas').getContext('2d');if(tempCtx.isPointInPath(path,x,y)){isDragging=true;dragStart.x=x-draggableShape.offset[0];dragStart.y=y-draggableShape.offset[1];placerCanvas.setPointerCapture(e.pointerId);placerCanvas.classList.add('dragging');}});       
+        placerCanvas.addEventListener('pointermove',e=>{if(!isDragging||draggableShape.placed)return;const rect=placerCanvas.getBoundingClientRect();const x=e.clientX-rect.left;const y=e.clientY-rect.top;draggableShape.offset[0]=x-dragStart.x;draggableShape.offset[1]=y-dragStart.y;drawPlacerScene();});
+        placerCanvas.addEventListener('pointerup',e=>{if(!isDragging)return;isDragging=false;placerCanvas.releasePointerCapture(e.pointerId);placerCanvas.classList.remove('dragging');if(draggableShape.placed)return;checkPlacement();drawPlacerScene();});
+        placerCanvas.addEventListener('pointerleave',e=>{if(isDragging){isDragging=false;placerCanvas.releasePointerCapture(e.pointerId);placerCanvas.classList.remove('dragging');if(draggableShape.placed)return;checkPlacement();drawPlacerScene();}});
+        newLatticeButton.addEventListener('click',loadNewLatticeForPlacer);
+        resetDraggableShapeBtn.addEventListener('click', resetCurrentDraggableShape);
+
+        // --- Tab Switching Logic (Unchanged) ---
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const contentSections = document.querySelectorAll('.content-section');
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                const targetSectionId = button.id.replace('tab-','') + '-section';
+                contentSections.forEach(section => {
+                    section.classList.toggle('active', section.id === targetSectionId);
+                });
+                if (targetSectionId === 'game1-section' && !gameGL1) { setupGame1Canvas(); loadQuestion(); }
+                if (targetSectionId === 'game2-section' && !placerGL) { setupPlacerCanvas(); }
+            });
+        });
+
+        // Initial drawing for learning canvases
+        document.addEventListener('DOMContentLoaded', () => {
+            drawTranslationalSymmetry();
+            drawSimpleLattice();
+            drawUnitCellExample();
+            drawPrimitiveVsNonPrimitive();
+            drawOblique();
+            drawRectangularP();
+            drawRectangularC();
+            drawSquare();
+            drawHexagonal();
+        });
+    </script>
+</body>
+</html>

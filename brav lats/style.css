@@ -1,0 +1,296 @@
+body { font-family: 'Inter', sans-serif; }
+.content-section { display: none; }
+.content-section.active { display: block; }
+canvas { border: 1px solid #ccc; display: block; margin: 1rem auto; touch-action: none; }
+.tab-button { transition: background-color 0.3s, color 0.3s; }
+.tab-button.active { background-color: #3B82F6; color: white; }
+.tab-button:not(.active):hover { background-color: #DBEAFE; }
+h2 { font-size: 1.75rem; font-weight: 600; margin-bottom: 1rem; color: #1E3A8A; }
+h3 { font-size: 1.25rem; font-weight: 500; margin-top: 1.5rem; margin-bottom: 0.75rem; color: #1E40AF; }
+p, ul { margin-bottom: 0.75rem; line-height: 1.6; color: #374151;}
+ul { list-style-position: inside; padding-left: 1rem;}
+li { margin-bottom: 0.25rem; }
+strong { color: #1D4ED8; }
+.info-box { background-color: #EFF6FF; border-left: 4px solid #3B82F6; padding: 1rem; margin-bottom: 1rem; border-radius: 0.25rem;}
+.game-button, .shape-selector-button {
+    background-color: #2563EB; color: white; padding: 0.5rem 1rem; border-radius: 0.375rem;
+    margin: 0.25rem; cursor: pointer; transition: background-color 0.2s; border: 2px solid transparent;
+}
+.game-button:hover, .shape-selector-button:hover { background-color: #1D4ED8; }
+.shape-selector-button.active-shape { background-color: #1E40AF; border-color: #60A5FA; }
+.game-button.correct { background-color: #16A34A; }
+.game-button.incorrect { background-color: #DC2626; }
+#feedback, #feedback-placer { margin-top: 1rem; font-weight: bold; min-height: 24px; }
+.draggable-shape { cursor: grab; }
+.draggable-shape:active { cursor: grabbing; }
+
+/* brav lats/style.css - Page-specific styles for Bravais Lattice Explorer */
+
+/* Remove Tailwind utility classes from HTML and define styles here or use shared-theme.css */
+
+.bravais-content-wrapper {
+    background-color: rgba(var(--bg-secondary-rgb, 28, 28, 43), 0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    padding: 2rem;
+    border-radius: 12px;
+    border: 1px solid rgba(var(--accent-primary-rgb, 255, 215, 0), 0.3);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+    width: 100%;
+    max-width: 900px; /* Adjust as needed */
+    margin: 2rem auto;
+    color: var(--text-primary);
+}
+
+.bravais-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.bravais-header h1 {
+    font-family: 'Orbitron', sans-serif;
+    color: var(--accent-primary);
+    font-size: 2.2rem;
+    margin-bottom: 0.5rem;
+}
+
+.bravais-header p {
+    color: var(--text-secondary);
+    font-size: 1rem;
+}
+
+.bravais-tabs {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(var(--accent-primary-rgb), 0.2);
+}
+
+/* Tab button styles are mostly handled in the <style> block of index.html for direct variable use,
+   but specific structural or non-variable based overrides can go here. */
+
+.content-section {
+    display: none; /* Keep this */
+    padding: 1rem 0; /* Add some padding to content sections */
+}
+.content-section.active {
+    display: block; /* Keep this */
+}
+
+.content-section h2 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 1.25rem;
+    color: var(--accent-primary);
+    border-bottom: 1px solid rgba(var(--accent-primary-rgb), 0.2);
+    padding-bottom: 0.5rem;
+}
+
+.content-section h3 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 500;
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+    color: var(--accent-tertiary);
+}
+
+.content-section p, .content-section ul {
+    margin-bottom: 0.75rem;
+    line-height: 1.7;
+    color: var(--text-primary);
+}
+
+.content-section ul {
+    list-style-position: inside;
+    padding-left: 1rem;
+}
+.content-section li {
+    margin-bottom: 0.3rem;
+}
+
+.content-section strong {
+    color: var(--accent-secondary);
+    font-weight: 600;
+}
+
+.info-box {
+    background-color: rgba(var(--bg-accent-rgb), 0.5);
+    border-left: 4px solid var(--accent-primary);
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    border-radius: 6px;
+    color: var(--text-secondary);
+}
+
+.info-box p strong {
+    color: var(--accent-primary); /* Make strong text in info-box more prominent */
+}
+
+.learn-article {
+    margin-bottom: 2rem;
+}
+
+/* Canvas styles */
+canvas {
+    display: block;
+    margin: 1rem auto;
+    touch-action: none; 
+    border: 1px solid rgba(var(--accent-primary-rgb), 0.2);
+    border-radius: 6px;
+    background-color: rgba(var(--bg-primary-rgb), 0.3); /* Slightly visible background for canvases */
+}
+
+.canvas-caption {
+    font-size: 0.85rem;
+    text-align: center;
+    color: var(--text-secondary);
+    margin-top: 0.25rem;
+    margin-bottom: 1rem;
+}
+
+.lattice-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+.lattice-grid > div {
+    background-color: rgba(var(--bg-accent-rgb), 0.3);
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid rgba(var(--accent-primary-rgb), 0.1);
+}
+
+.lattice-grid strong {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--accent-tertiary);
+}
+
+.lattice-grid-full {
+    grid-column: 1 / -1; /* Make this item span full width if it's the only one or needs more space */
+}
+
+/* Game specific styles */
+.game-container {
+    background-color: rgba(var(--bg-accent-rgb), 0.5);
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-top: 1rem;
+    border: 1px solid rgba(var(--accent-secondary-rgb), 0.2);
+}
+
+.game-question, .game-info {
+    margin-bottom: 1rem;
+    text-align: center;
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: var(--text-primary);
+}
+
+.game-answers {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.game-button, .placer-controls .btn, #shape-selector-container .btn {
+    /* Use .btn styles from shared-theme.css as a base */
+    /* Specific overrides for game buttons */
+    background-color: var(--accent-tertiary);
+    color: var(--bg-primary);
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+}
+
+.game-button:hover, .placer-controls .btn:hover, #shape-selector-container .btn:hover {
+    background-color: color-mix(in srgb, var(--accent-tertiary) 80%, #fff 20%);
+}
+
+.game-button.correct, .btn.correct {
+    background-color: #28a745; /* Green from theme */
+    color: white;
+}
+
+.game-button.incorrect, .btn.incorrect {
+    background-color: #dc3545; /* Red from theme */
+    color: white;
+}
+
+.shape-selector-button.active-shape, .btn.active-shape {
+    background-color: var(--accent-primary);
+    color: var(--bg-primary);
+    border: 2px solid var(--accent-secondary);
+}
+
+.game-feedback {
+    margin-top: 1rem;
+    font-weight: bold;
+    min-height: 24px;
+    text-align: center;
+    padding: 0.5rem;
+    border-radius: 4px;
+}
+
+.game-feedback.correct {
+    background-color: rgba(40, 167, 69, 0.2);
+    color: #28a745;
+}
+.game-feedback.incorrect {
+    background-color: rgba(220, 53, 69, 0.2);
+    color: #dc3545;
+}
+
+.placer-controls {
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background-color: rgba(var(--bg-accent-rgb), 0.3);
+    border-radius: 6px;
+    text-align: center;
+}
+.placer-controls p {
+    margin-bottom: 0.5rem;
+}
+
+#shape-selector-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+#placer-canvas.dragging, .draggable-shape:active {
+    cursor: grabbing;
+}
+#placer-canvas, .draggable-shape {
+    cursor: grab;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .bravais-content-wrapper {
+        padding: 1rem;
+        margin: 1rem auto;
+    }
+    .bravais-header h1 {
+        font-size: 1.8rem;
+    }
+    .bravais-tabs {
+        flex-direction: column;
+    }
+    .tab-button {
+        margin-bottom: 0.25rem;
+        border-radius: 6px;
+    }
+    .content-section h2 {
+        font-size: 1.5rem;
+    }
+    .content-section h3 {
+        font-size: 1.2rem;
+    }
+} 

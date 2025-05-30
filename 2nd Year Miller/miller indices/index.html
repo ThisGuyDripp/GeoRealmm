@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Miller Indices Calculator</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="video-background">
+        <video autoplay loop muted playsinline id="bg-video">
+            <source src="videos/ree.mp4" type="video/mp4"> Your browser does not support the video tag.
+        </video>
+    </div>
+    <div class="container">
+        <div class="control-panel">
+            <h1>Miller Indices Calculator</h1>
+
+            <div class="input-field">
+                <label for="crystal-system">Crystal System</label>
+                <select id="crystal-system" aria-label="Select crystal system">
+                    <option value="cubic" selected>Cubic (hkl)</option>
+                    <option value="hexagonal">Hexagonal (hkil)</option>
+                    </select>
+            </div>
+
+            <div class="input-field toggle-switch-container">
+                <label for="use-custom-axial-ratios" class="toggle-switch-label">Use Custom Axial Ratios:</label>
+                <label class="switch">
+                    <input type="checkbox" id="use-custom-axial-ratios">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+
+            <div id="axial-ratios-group" class="input-group" style="display: none;">
+                <h3 class="group-title">Axial Ratios</h3>
+                <div id="cubic-axial-ratios-inputs" class="axial-ratios-inputs" style="display: none;">
+                    <div class="input-field">
+                        <label for="a_b_ratio">a/b Ratio</label>
+                        <input type="number" id="a_b_ratio" placeholder="e.g., 1.0" step="0.01"
+                               aria-label="a divided by b axial ratio"
+                               title="Enter the axial ratio a/b (default for cubic: 1.0)">
+                        <span class="validation-message" id="a_b_ratio-validation"></span>
+                    </div>
+                    <div class="input-field">
+                        <label for="c_b_ratio">c/b Ratio</label>
+                        <input type="number" id="c_b_ratio" placeholder="e.g., 1.0" step="0.01"
+                               aria-label="c divided by b axial ratio"
+                               title="Enter the axial ratio c/b (default for cubic: 1.0)">
+                        <span class="validation-message" id="c_b_ratio-validation"></span>
+                    </div>
+                </div>
+                <div id="hexagonal-axial-ratios-inputs" class="axial-ratios-inputs" style="display: none;">
+                    <div class="input-field">
+                        <label for="c_a_ratio">c/a Ratio</label>
+                        <input type="number" id="c_a_ratio" placeholder="e.g., 1.1001" step="0.0001"
+                               aria-label="c divided by a axial ratio"
+                               title="Enter the axial ratio c/a (e.g., Quartz ~1.1001)">
+                        <span class="validation-message" id="c_a_ratio-validation"></span>
+                    </div>
+                </div>
+                </div>
+
+            <h3 class="group-title">Miller Indices</h3>
+            <div class="input-group">
+                <div class="input-field">
+                    <label for="h">h index</label>
+                    <input type="number"
+                           id="h"
+                           placeholder="Enter h"
+                           step="1"
+                           aria-label="h index"
+                           title="Enter integer value for h index"
+                           data-tooltip="Values can be positive, negative, or zero">
+                    <span class="validation-message" id="h-validation"></span>
+                </div>
+                <div class="input-field">
+                    <label for="k">k index</label>
+                    <input type="number"
+                           id="k"
+                           placeholder="Enter k"
+                           step="1"
+                           aria-label="k index"
+                           title="Enter integer value for k index"
+                           data-tooltip="Values can be positive, negative, or zero">
+                    <span class="validation-message" id="k-validation"></span>
+                </div>
+                <div class="input-field hexagonal-only" style="display: none;">
+                    <label for="i">i index (auto: -(h+k))</label>
+                    <input type="number"
+                           id="i"
+                           placeholder="i = -(h+k)"
+                           aria-label="i index (automatically calculated)"
+                           title="Calculated as -(h+k)"
+                           readonly
+                           disabled>
+                    <span class="validation-message" id="i-validation"></span>
+                </div>
+                 <div class="input-field">
+                    <label for="l">l index</label>
+                    <input type="number"
+                           id="l"
+                           placeholder="Enter l"
+                           step="1"
+                           aria-label="l index"
+                           title="Enter integer value for l index"
+                           data-tooltip="Values can be positive, negative, or zero">
+                    <span class="validation-message" id="l-validation"></span>
+                </div>
+            </div>
+            <div class="button-group">
+                <button class="primary-btn"
+                        accesskey="g"
+                        title="Generate (Alt+G)">
+                    Generate
+                </button>
+                <button class="secondary-btn"
+                        accesskey="r"
+                        title="Reset (Alt+R)">
+                    Reset
+                </button>
+            </div>
+            <div id="error" class="error-message" role="alert"></div>
+        </div>
+
+        <div class="visualization-container">
+            <div id="loading" class="loading-overlay">
+                <div class="loader"></div>
+                <span>Loading visualization...</span>
+            </div>
+            <div id="scene-container"
+                 aria-label="3D visualization of Miller indices"
+                 role="img">
+            </div>
+        </div>
+
+        <div class="solution-section" id="solution">
+            <h2>Solution Steps</h2>
+            <div id="steps"></div>
+        </div>
+    </div>
+
+    <div id="script-loading" class="script-loading">Loading resources...</div>
+
+    <script async src="https://unpkg.com/es-module-shims/dist/es-module-shims.js"></script>
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.157.0/build/three.module.js",
+                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.157.0/examples/jsm/"
+            }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+        window.THREE = THREE;
+        window.OrbitControls = OrbitControls;
+
+        window.threeLoaded = true;
+        window.dispatchEvent(new Event('threeLoaded'));
+    </script>
+
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+
+    <script defer src="config.js"></script>
+    <script defer src="utils.js"></script>
+    <script defer src="InterceptCalculator.js"></script>
+    <script defer src="AxisSystem.js"></script>
+    <script defer src="MillerVisualizer.js"></script>
+    <script defer src="main.js"></script>
+    <script>
+         window.addEventListener('load', function() {
+             const loadingElement = document.getElementById('script-loading');
+             if (loadingElement) {
+                 loadingElement.style.display = 'none';
+             }
+         });
+
+        window.onerror = function(msg, url, lineNo, columnNo, error) {
+            console.error('Unhandled Script Error:', { msg, url, lineNo, columnNo, error });
+            const errorElement = document.getElementById('error');
+             if (errorElement && errorElement.style.display !== 'block') {
+                 errorElement.textContent = 'An unexpected error occurred. Please check the console for details.';
+                 errorElement.style.display = 'block';
+             }
+            return false;
+        };
+    </script>
+</body>
+</html>
