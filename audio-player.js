@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function initAudioPlayer() {
         // Create audio element
         audioPlayer = new Audio(audioFile);
-        audioPlayer.loop = true; // Play once as requested
+        audioPlayer.loop = false; // Play once as requested
 
         // Create mute button
         muteButton = document.createElement('button');
